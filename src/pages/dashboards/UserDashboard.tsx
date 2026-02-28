@@ -108,7 +108,7 @@ const UserDashboard = () => {
                                     initial={{ opacity: 0, scale: 1.2 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0 }}
-                                    className="absolute w-48 h-64 border-2 border-neon-red bg-red-500/10 z-20 flex flex-col justify-end p-1 shadow-[0_0_15px_rgba(255,0,60,0.5)]"
+                                    className="absolute w-48 h-64 border-2 border-neon-red bg-red-500/10 z-20 flex flex-col justify-end p-1 shadow-red"
                                 >
                                     <span className="bg-neon-red text-black text-xs font-bold px-1 w-fit">PERSON {(t.mlProb * 100).toFixed(0)}%</span>
                                 </motion.div>

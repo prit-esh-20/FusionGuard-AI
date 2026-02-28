@@ -5,7 +5,6 @@ import Landing from './pages/public/Landing';
 import Architecture from './pages/public/Architecture';
 import MachineLearning from './pages/public/MachineLearning';
 import ExperimentalResults from './pages/public/ExperimentalResults';
-import ResearchPaper from './pages/public/ResearchPaper';
 import Login from './pages/auth/Login';
 import UserDashboard from './pages/dashboards/UserDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
@@ -23,7 +22,6 @@ function App() {
             <Route path="architecture" element={<Architecture />} />
             <Route path="machine-learning" element={<MachineLearning />} />
             <Route path="experimental-results" element={<ExperimentalResults />} />
-            <Route path="research-paper" element={<ResearchPaper />} />
             <Route path="login" element={<Login />} />
           </Route>
 

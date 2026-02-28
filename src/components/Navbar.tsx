@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Menu, X, Terminal, Cpu, LineChart, FileText } from 'lucide-react';
+import { Shield, Menu, X, Terminal, Cpu, LineChart } from 'lucide-react';
 import { useState } from 'react';
 
 const Navbar = () => {
@@ -12,7 +12,6 @@ const Navbar = () => {
         { name: 'Architecture', path: '/architecture', icon: Cpu },
         { name: 'Machine Learning', path: '/machine-learning', icon: Terminal },
         { name: 'Results', path: '/experimental-results', icon: LineChart },
-        { name: 'Research Paper', path: '/research-paper', icon: FileText },
     ];
 
     const handleDragClose = () => setIsOpen(false);

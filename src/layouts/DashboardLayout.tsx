@@ -8,7 +8,7 @@ const SidebarLink = ({ to, icon: Icon, label, isActive }: { to: string; icon: an
     <Link
         to={to}
         className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${isActive
-            ? 'glass-card bg-neon-cyan/20 border-neon-cyan/50 text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.3)]'
+            ? 'glass-card bg-neon-cyan/20 border-neon-cyan/50 text-neon-cyan shadow-neon-cyan'
             : 'text-gray-400 hover:text-white hover:bg-dark-surface hover:shadow-md'
             }`}
     >

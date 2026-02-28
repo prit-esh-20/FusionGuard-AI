@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Cpu, Server, Wifi, Activity, Database, Smartphone, ShieldCheck } from 'lucide-react';
+import { Cpu, Server, Wifi, Activity, Database, Smartphone, ShieldCheck, Download, FileText, Camera } from 'lucide-react';
 
 const ArchNode = ({ title, icon: Icon, desc, delay, gradient }: any) => (
     <motion.div
@@ -106,11 +106,46 @@ const Architecture = () => {
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
                 </div>
             </section>
+            {/* Technical Documentation Section */}
+            <section className="space-y-6">
+                <div className="flex items-center space-x-3 text-white">
+                    <FileText className="w-6 h-6 text-neon-blue" />
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-wide">Technical Documentation</h2>
+                </div>
+
+                <div className="glass-card p-8 md:p-10 border border-dark-border hover:border-neon-blue/30 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-8 group relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-neon-blue/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+
+                    <div className="space-y-3 max-w-2xl relative z-10">
+                        <h3 className="text-2xl font-bold text-white group-hover:text-neon-cyan transition-colors">Technical Whitepaper – FusionGuard AI</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed">
+                            A detailed technical report covering system architecture, sensor fusion methodology, machine learning pipeline, experimental validation, and performance evaluation.
+                        </p>
+                        <div className="flex items-center gap-4 text-xs font-mono text-gray-500 pt-2">
+                            <span className="flex items-center gap-1.5 px-2 py-1 bg-dark-base rounded border border-dark-border">
+                                <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan"></span> IEEE Format
+                            </span>
+                            <span className="px-2 py-1 bg-dark-base rounded border border-dark-border">12 Pages</span>
+                            <span className="px-2 py-1 bg-dark-base rounded border border-dark-border hidden sm:block">Includes experimental validation & system design</span>
+                        </div>
+                    </div>
+
+                    <div className="w-full md:w-auto flex-shrink-0 relative z-10">
+                        <a
+                            href="/FusionGuard-AI-Whitepaper.pdf"
+                            download="FusionGuard-AI-Whitepaper.pdf"
+                            className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-dark-surface border border-neon-cyan/50 text-neon-cyan font-bold rounded shadow-btn hover:shadow-btn-hover hover:scale-105 active:scale-95 transition-all group/btn overflow-hidden relative"
+                            aria-label="Download Technical Whitepaper PDF"
+                        >
+                            <div className="absolute inset-0 bg-neon-cyan/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 pointer-events-none" />
+                            <Download className="w-5 h-5 group-hover/btn:-translate-y-1 transition-transform animate-pulse" />
+                            <span className="relative uppercase tracking-wider text-sm">Download Whitepaper (PDF)</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };
-
-// add missing imports
-import { Camera } from 'lucide-react';
 
 export default Architecture;

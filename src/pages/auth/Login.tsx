@@ -59,7 +59,7 @@ const Login = () => {
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.6, type: 'spring' }}
-                className="w-full max-w-md p-8 glass-card border-dark-border z-10 relative shadow-[0_0_50px_rgba(0,240,255,0.1)] before:content-[''] before:absolute before:inset-0 before:border before:border-neon-cyan/20 before:rounded-xl before:animate-pulse"
+                className="w-full max-w-md p-8 glass-card border-dark-border z-10 relative shadow-login before:content-[''] before:absolute before:inset-0 before:border before:border-neon-cyan/20 before:rounded-xl before:animate-pulse"
             >
                 <div className="text-center mb-8">
                     <motion.div
@@ -68,9 +68,9 @@ const Login = () => {
                         className="w-20 h-20 bg-dark-surface/80 rounded-full border border-dark-border flex items-center justify-center mx-auto mb-4 neon-border-cyan shadow-lg relative"
                     >
                         {isUnlocked ? (
-                            <Unlock className="w-10 h-10 text-neon-green ml-1 drop-shadow-[0_0_8px_rgba(57,255,20,0.8)]" />
+                            <Unlock className="w-10 h-10 text-neon-green ml-1 drop-shadow-neon-green" />
                         ) : (
-                            <Lock className="w-10 h-10 text-neon-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" />
+                            <Lock className="w-10 h-10 text-neon-cyan drop-shadow-neon-cyan" />
                         )}
                         {/* Spinning Radar Effect */}
                         <div className="absolute inset-0 rounded-full border border-neon-cyan/30 border-r-transparent animate-spin" style={{ animationDuration: '3s' }} />
