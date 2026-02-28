@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Eye, Cpu, BellRing, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const FeatureCard = ({ icon: Icon, title, desc, delay }: any) => (
     <motion.div
@@ -72,6 +73,8 @@ const PipelineNode = ({ label, delay, icon: Icon, isLast, index }: any) => (
 );
 
 const Landing = () => {
+    const { isAuthenticated } = useAuth();
+
     return (
         <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-40">
             {/* Hero Section */}
@@ -122,10 +125,16 @@ const Landing = () => {
                     transition={{ duration: 1, ease: "easeOut" }}
                     className="relative z-10 space-y-8"
                 >
-                    <div className="inline-flex items-center space-x-3 px-5 py-2.5 rounded-full glass-panel border-neon-cyan/30 text-neon-cyan shadow-lg">
-                        <span className="w-2 h-2 rounded-full bg-neon-green animate-breathing" />
-                        <span className="text-[10px] font-bold tracking-[0.2em] uppercase">System Live • Monitoring Perimeter</span>
-                    </div>
+                    {isAuthenticated && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="inline-flex items-center space-x-3 px-5 py-2.5 rounded-full glass-panel border-neon-cyan/30 text-neon-cyan shadow-lg"
+                        >
+                            <span className="w-2 h-2 rounded-full bg-neon-green animate-breathing" />
+                            <span className="text-[10px] font-bold tracking-[0.2em] uppercase">System Live • Monitoring Perimeter</span>
+                        </motion.div>
+                    )}
 
                     <div className="space-y-4">
                         <h2 className="text-2xl md:text-3xl font-bold tracking-[0.15em] text-gray-300 opacity-80 uppercase">FUSIONGUARD AI</h2>
@@ -140,8 +149,8 @@ const Landing = () => {
                     </div>
 
                     <p className="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 font-medium leading-relaxed opacity-90 px-4">
-                        Advanced robotic perimeter defense engineered with multi-modal sensor fusion,
-                        real-time neural inference, and autonomous navigation for critical infrastructure protection.
+                        Real-time AI-powered threat detection system engineered for
+                        autonomous perimeter defense and critical infrastructure protection.
                     </p>
 
                     <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8 mt-12">
@@ -190,7 +199,7 @@ const Landing = () => {
                             </motion.button>
                         </Link>
 
-                        <Link to="/architecture">
+                        <Link to="/results">
                             <motion.button
                                 whileHover="hover"
                                 whileTap={{ scale: 0.98 }}
@@ -205,7 +214,7 @@ const Landing = () => {
                                     }}
                                     className="text-sm"
                                 >
-                                    Technical Specs
+                                    System Results
                                 </motion.span>
                                 <motion.div
                                     className="inline-block ml-3"
@@ -215,7 +224,7 @@ const Landing = () => {
                                     }}
                                     transition={{ type: "spring", stiffness: 300, damping: 15 }}
                                 >
-                                    <Cpu className="w-5 h-5 text-neon-blue group-hover:text-neon-cyan transition-colors" />
+                                    <Activity className="w-5 h-5 text-neon-blue group-hover:text-neon-cyan transition-colors" />
                                 </motion.div>
                                 <motion.div
                                     variants={{
@@ -234,26 +243,26 @@ const Landing = () => {
             {/* Highlights Section */}
             <section className="space-y-20 pt-10">
                 <div className="text-center space-y-4 flex flex-col items-center">
-                    <span className="text-[10px] font-mono text-neon-cyan/60 tracking-[0.5em] uppercase">System Capabilities</span>
-                    <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight uppercase">Performance Pillars</h2>
+                    <span className="text-[10px] font-mono text-neon-cyan/60 tracking-[0.5em] uppercase">Core Features</span>
+                    <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight uppercase">System Highlights</h2>
                     <div className="w-16 h-1 px-1 bg-gradient-to-r from-transparent via-neon-cyan to-transparent rounded-full" />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <FeatureCard icon={Activity} title="Thermal Vision" desc="High-fidelity IR array detects living heat signatures in absolute darkness with precise spatial mapping." delay={0.1} />
-                    <FeatureCard icon={ShieldCheck} title="Verified Defense" desc="Autonomous threat validation via ultrasonic echolocation cross-referenced with thermal delta metrics." delay={0.2} />
-                    <FeatureCard icon={Eye} title="Edge Inference" desc="On-site neural processing for instantaneous human classification and behavioral threat analysis." delay={0.3} />
-                    <FeatureCard icon={Activity} title="Zero Latency" desc="Command center synchronized via active WebSockets for real-time telemetry and hardware override." delay={0.4} />
+                    <FeatureCard icon={Activity} title="Heat Mapping" desc="Advanced IR arrays detect living thermal signatures in complete darkness." delay={0.1} />
+                    <FeatureCard icon={ShieldCheck} title="Triple Validated" desc="Multi-sensor verification ensuring zero false alarms during patrol." delay={0.2} />
+                    <FeatureCard icon={Eye} title="Real-Time AI" desc="Instant human detection and behavioral analysis at the perimeter edge." delay={0.3} />
+                    <FeatureCard icon={Activity} title="Live Console" desc="Instant data synchronization with command center for full system control." delay={0.4} />
                 </div>
             </section>
 
             {/* Detection Pipeline Section */}
             <section className="space-y-24 pb-32">
                 <div className="text-center space-y-4 flex flex-col items-center">
-                    <span className="text-[10px] font-mono text-neon-blue/60 tracking-[0.5em] uppercase">Logical Architecture</span>
+                    <span className="text-[10px] font-mono text-neon-blue/60 tracking-[0.5em] uppercase">System Workflow</span>
                     <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight uppercase">Operational Pipeline</h2>
                     <div className="w-16 h-1 bg-gradient-to-r from-transparent via-neon-blue to-transparent rounded-full" />
-                    <p className="text-gray-300 max-w-2xl mx-auto pt-2 font-medium">Sequential sensor intelligence validating perimeter security at wire speed.</p>
+                    <p className="text-gray-300 max-w-2xl mx-auto pt-2 font-medium">Clear system logic validating security from sensor scan to alert dispatch.</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0 overflow-visible py-4">

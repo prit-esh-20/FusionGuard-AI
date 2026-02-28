@@ -10,11 +10,12 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [isUnlocked, setIsUnlocked] = useState(false);
+    const [loginSuccessToast, setLoginSuccessToast] = useState<{ message: string, type: 'admin' | 'user' } | null>(null);
 
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || '/user/dashboard';
+    const from = location.state?.from?.pathname;
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,14 +30,38 @@ const Login = () => {
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        if (username === 'admin' && password === 'admin') {
+        const savedUsersStr = localStorage.getItem('fusionguard_users');
+        let users: any[] = [];
+        if (savedUsersStr) {
+            users = JSON.parse(savedUsersStr);
+        } else {
+            // mock default
+            users = [
+                { email: 'admin@fusionguard.ai', password: 'admin123', role: 'Admin', status: 'Active' },
+                { email: 'user@fusionguard.ai', password: 'user123', role: 'Operator', status: 'Active' }
+            ];
+        }
+
+        const user = users.find(u => u.email === username && u.password === password);
+
+        if (user) {
+            if (user.status !== 'Active') {
+                setError('Access Denied: Identity Inactive.');
+                setIsLoading(false);
+                return;
+            }
+
             setIsUnlocked(true);
-            login('admin');
-            setTimeout(() => navigate(from === '/' ? '/admin/dashboard' : from, { replace: true }), 1000);
-        } else if (username === 'user' && password === 'user') {
-            setIsUnlocked(true);
-            login('user');
-            setTimeout(() => navigate(from === '/' ? '/user/dashboard' : from, { replace: true }), 1000);
+            const sysRole = user.role === 'Admin' ? 'admin' : 'user';
+            login(sysRole);
+            setLoginSuccessToast({ message: `${user.role} Access Granted`, type: sysRole });
+
+            // Redirect based on role
+            const target = from && from !== '/' && from !== '/dashboard' && from !== '/admin/dashboard'
+                ? from
+                : (sysRole === 'admin' ? '/admin/dashboard' : '/dashboard');
+
+            setTimeout(() => navigate(target, { replace: true }), 1500);
         } else {
             setError('Access Denied: Invalid parameters.');
             setIsLoading(false);
@@ -55,23 +80,53 @@ const Login = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dark-base to-transparent z-0" />
 
+            {/* Notification Toast */}
+            <AnimatePresence>
+                {loginSuccessToast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -50, x: '-50%' }}
+                        animate={{ opacity: 1, y: 30, x: '-50%' }}
+                        exit={{ opacity: 0, y: -50, x: '-50%' }}
+                        className={`absolute top-0 left-1/2 z-50 px-6 py-3 rounded-full flex items-center space-x-3
+                            ${loginSuccessToast.type === 'admin'
+                                ? 'bg-neon-red/10 border border-neon-red text-neon-red shadow-[0_0_15px_rgba(255,50,50,0.4)]'
+                                : 'bg-neon-cyan/10 border border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.4)]'}`}
+                    >
+                        {loginSuccessToast.type === 'admin' ? <Shield className="w-5 h-5" /> : <User className="w-5 h-5" />}
+                        <span className="font-bold tracking-widest uppercase text-sm">{loginSuccessToast.message}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.6, type: 'spring' }}
-                className="w-full max-w-md p-8 glass-card border-dark-border z-10 relative shadow-login before:content-[''] before:absolute before:inset-0 before:border before:border-neon-cyan/20 before:rounded-xl before:animate-pulse"
+                className="w-full max-w-md p-8 glass-card border-dark-border z-10 relative shadow-login before:content-[''] before:absolute before:inset-0 before:border before:border-neon-cyan/20 before:rounded-xl before:animate-pulse before:pointer-events-none"
             >
                 <div className="text-center mb-8">
                     <motion.div
                         animate={{ rotateY: isUnlocked ? 180 : 0 }}
                         transition={{ duration: 0.8, type: 'spring' }}
-                        className="w-20 h-20 bg-dark-surface/80 rounded-full border border-dark-border flex items-center justify-center mx-auto mb-4 neon-border-cyan shadow-lg relative"
+                        className="w-20 h-20 bg-dark-surface/80 rounded-full border border-dark-border flex items-center justify-center mx-auto mb-4 neon-border-cyan shadow-lg relative overflow-hidden"
                     >
                         {isUnlocked ? (
                             <Unlock className="w-10 h-10 text-neon-green ml-1 drop-shadow-neon-green" />
                         ) : (
                             <Lock className="w-10 h-10 text-neon-cyan drop-shadow-neon-cyan" />
                         )}
+
+                        <AnimatePresence>
+                            {isUnlocked && (
+                                <motion.div
+                                    initial={{ y: '-100%' }}
+                                    animate={{ y: '200%' }}
+                                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                                    className="absolute inset-0 bg-neon-green/20 h-1 w-full z-20 shadow-[0_0_15px_rgba(50,255,50,0.5)]"
+                                />
+                            )}
+                        </AnimatePresence>
+
                         {/* Spinning Radar Effect */}
                         <div className="absolute inset-0 rounded-full border border-neon-cyan/30 border-r-transparent animate-spin" style={{ animationDuration: '3s' }} />
                     </motion.div>
@@ -85,9 +140,22 @@ const Login = () => {
                             transition={{ delay: 0.5, duration: 1 }}
                         />
                     </h2>
-                    <p className="text-neon-cyan text-sm uppercase tracking-widest mt-4 opacity-80 font-mono">
-                        System Sub-routine 0xA1
-                    </p>
+
+                    {location.state?.from && !error && (
+                        <motion.p
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-neon-cyan/60 text-[10px] uppercase tracking-[0.2em] mt-4 font-bold border border-neon-cyan/20 py-1.5 px-3 rounded-full inline-block"
+                        >
+                            Authentication required to access system modules
+                        </motion.p>
+                    )}
+
+                    {!location.state?.from && (
+                        <p className="text-neon-cyan text-sm uppercase tracking-widest mt-4 opacity-80 font-mono">
+                            System Sub-routine 0xA1
+                        </p>
+                    )}
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
@@ -112,7 +180,7 @@ const Login = () => {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Operator ID (admin or user)"
+                                placeholder="Operator Email (admin@fusionguard.ai or user@fusionguard.ai)"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 disabled={isLoading || isUnlocked}
@@ -126,7 +194,7 @@ const Login = () => {
                             </div>
                             <input
                                 type="password"
-                                placeholder="Access Key (admin or user)"
+                                placeholder="Access Key (admin123 or user123)"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={isLoading || isUnlocked}
@@ -138,9 +206,9 @@ const Login = () => {
                     <button
                         type="submit"
                         disabled={isLoading || isUnlocked}
-                        className={`w-full py-4 px-4 rounded-lg flex items-center justify-center space-x-2 font-bold uppercase tracking-widest transition-all ${isUnlocked
-                                ? 'bg-neon-green text-black neon-border-green'
-                                : 'bg-neon-cyan/10 border border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black neon-border-cyan group'
+                        className={`relative w-full py-4 px-4 rounded-lg flex items-center justify-center space-x-2 font-bold uppercase tracking-widest transition-all ${isUnlocked
+                            ? 'bg-neon-green text-black neon-border-green'
+                            : 'bg-neon-cyan/10 border border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black neon-border-cyan group'
                             }`}
                     >
                         {isLoading ? (

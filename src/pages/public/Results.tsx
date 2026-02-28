@@ -30,7 +30,7 @@ const StatHighlight = ({ icon: Icon, value, label, colorClass }: any) => (
     </div>
 );
 
-const ExperimentalResults = () => {
+const Results = () => {
     return (
         <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
             {/* Header */}
@@ -39,42 +39,42 @@ const ExperimentalResults = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center space-y-6"
             >
-                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass-panel border-purple-500/50 text-purple-400 uppercase text-xs font-bold tracking-widest">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass-panel border-neon-cyan/50 text-neon-cyan uppercase text-xs font-bold tracking-[0.2em]">
                     <Zap className="w-4 h-4" />
-                    <span>Real-World Field Testing</span>
+                    <span>Live Reliability Metrics</span>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-extrabold text-white">EXPERIMENTAL RESULTS</h1>
-                <p className="max-w-2xl mx-auto text-gray-400 text-lg">
-                    Empirical data gathered from 500+ hours of autonomous patrolling across varied environmental conditions.
+                <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">System Performance</h1>
+                <p className="max-w-2xl mx-auto text-gray-400 text-lg font-medium leading-relaxed">
+                    Real-time operational data gathered from extensive field testing across varied environmental conditions.
                 </p>
             </motion.div>
 
             {/* Highlights */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                    <StatHighlight icon={ShieldAlert} value="99.2%" label="False Alarm Reduction" colorClass="neon-cyan" />
+                    <StatHighlight icon={ShieldAlert} value="99.2%" label="Reliability Rate" colorClass="neon-cyan" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                    <StatHighlight icon={Clock} value="48ms" label="Average Latency" colorClass="neon-blue" />
+                    <StatHighlight icon={Clock} value="48ms" label="Sync Latency" colorClass="neon-blue" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                    <StatHighlight icon={CheckCircle} value="10,000+" label="Frames Processed" colorClass="neon-green" />
+                    <StatHighlight icon={CheckCircle} value="10k+" label="Events Logged" colorClass="neon-green" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                    <StatHighlight icon={Zap} value="94.5%" label="Peak Accuracy" colorClass="purple-500" />
+                    <StatHighlight icon={Zap} value="94.5%" label="Detection Conf." colorClass="purple-500" />
                 </motion.div>
             </div>
 
             {/* Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-10">
                 {/* Latency Area Chart */}
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="glass-panel p-6 rounded-2xl border-dark-border"
+                    className="glass-panel p-8 rounded-3xl border-dark-border"
                 >
-                    <h3 className="text-xl font-bold text-white mb-6">System Latency Over 24h</h3>
+                    <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-tight">System Response Time</h3>
                     <div className="h-72 w-full text-xs">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={latencyData}>
@@ -88,7 +88,7 @@ const ExperimentalResults = () => {
                                 <XAxis dataKey="time" stroke="#64748b" />
                                 <YAxis stroke="#64748b" />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#0B0F17', borderColor: '#00A3FF', color: '#fff' }}
+                                    contentStyle={{ backgroundColor: '#0B0F17', borderColor: '#00A3FF', color: '#fff', borderRadius: '12px' }}
                                     itemStyle={{ color: '#00F0FF' }}
                                 />
                                 <Area type="monotone" dataKey="latency" stroke="#00F0FF" fillOpacity={1} fill="url(#colorLatency)" />
@@ -102,9 +102,9 @@ const ExperimentalResults = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="glass-panel p-6 rounded-2xl border-dark-border"
+                    className="glass-panel p-8 rounded-3xl border-dark-border"
                 >
-                    <h3 className="text-xl font-bold text-white mb-6">Detection Accuracy by Target</h3>
+                    <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-tight">Detection Accuracy Rate</h3>
                     <div className="h-72 w-full text-xs">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={detectionData} layout="vertical" margin={{ left: 20 }}>
@@ -112,8 +112,8 @@ const ExperimentalResults = () => {
                                 <XAxis type="number" stroke="#64748b" domain={[0, 100]} />
                                 <YAxis dataKey="name" type="category" stroke="#E2E8F0" />
                                 <Tooltip
-                                    cursor={{ fill: '#1E293B' }}
-                                    contentStyle={{ backgroundColor: '#0B0F17', borderColor: '#00F0FF', color: '#fff' }}
+                                    cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                                    contentStyle={{ backgroundColor: '#0B0F17', borderColor: '#00F0FF', color: '#fff', borderRadius: '12px' }}
                                 />
                                 <Bar dataKey="rate" fill="#00F0FF" radius={[0, 4, 4, 0]} barSize={20}>
                                     {detectionData.map((entry, index) => (
@@ -124,53 +124,9 @@ const ExperimentalResults = () => {
                         </ResponsiveContainer>
                     </div>
                 </motion.div>
-
-                {/* Component Performance Table */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="lg:col-span-2 glass-panel p-6 rounded-2xl border-dark-border overflow-x-auto scrollbar-custom"
-                >
-                    <h3 className="text-xl font-bold text-white mb-6">Algorithm Performance Comparison</h3>
-                    <table className="min-w-full text-sm text-left text-gray-400">
-                        <thead className="text-xs text-neon-cyan uppercase bg-dark-surface/50 border-b border-dark-border">
-                            <tr>
-                                <th className="px-6 py-4 rounded-tl-lg">Detection Type</th>
-                                <th className="px-6 py-4">Precision</th>
-                                <th className="px-6 py-4">Recall</th>
-                                <th className="px-6 py-4">F1 Score</th>
-                                <th className="px-6 py-4 rounded-tr-lg">Processing Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="border-b border-dark-border hover:bg-dark-surface/30 transition-colors">
-                                <td className="px-6 py-4 font-medium text-white">YOLOv8 Edge</td>
-                                <td className="px-6 py-4 text-neon-green">94.2%</td>
-                                <td className="px-6 py-4">91.5%</td>
-                                <td className="px-6 py-4">92.8%</td>
-                                <td className="px-6 py-4">28ms</td>
-                            </tr>
-                            <tr className="border-b border-dark-border hover:bg-dark-surface/30 transition-colors">
-                                <td className="px-6 py-4 font-medium text-white">Thermal Thresholding</td>
-                                <td className="px-6 py-4">88.5%</td>
-                                <td className="px-6 py-4 text-neon-green">96.0%</td>
-                                <td className="px-6 py-4">92.1%</td>
-                                <td className="px-6 py-4 text-neon-green">12ms</td>
-                            </tr>
-                            <tr className="hover:bg-dark-surface/30 transition-colors">
-                                <td className="px-6 py-4 font-medium text-neon-cyan">Sensor Fusion (Combined)</td>
-                                <td className="px-6 py-4 text-neon-cyan font-bold">98.1%</td>
-                                <td className="px-6 py-4 text-neon-cyan font-bold">97.4%</td>
-                                <td className="px-6 py-4 text-neon-cyan font-bold">97.7%</td>
-                                <td className="px-6 py-4 font-bold">45ms</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </motion.div>
             </div>
         </div>
     );
 };
 
-export default ExperimentalResults;
+export default Results;

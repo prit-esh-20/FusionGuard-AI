@@ -5,6 +5,7 @@ type Role = 'guest' | 'user' | 'admin';
 
 interface AuthContextType {
     role: Role;
+    isAuthenticated: boolean;
     login: (role: Role) => void;
     logout: () => void;
 }
@@ -12,18 +13,26 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [role, setRole] = useState<Role>('guest');
+    // Attempt to restore role from localStorage, default to 'guest'
+    const [role, setRole] = useState<Role>(() => {
+        const savedRole = localStorage.getItem('fusionguard_role');
+        return (savedRole as Role) || 'guest';
+    });
 
-    const login = (role: Role) => {
-        setRole(role);
+    const isAuthenticated = role !== 'guest';
+
+    const login = (newRole: Role) => {
+        setRole(newRole);
+        localStorage.setItem('fusionguard_role', newRole);
     };
 
     const logout = () => {
         setRole('guest');
+        localStorage.removeItem('fusionguard_role');
     };
 
     return (
-        <AuthContext.Provider value={{ role, login, logout }}>
+        <AuthContext.Provider value={{ role, isAuthenticated, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
