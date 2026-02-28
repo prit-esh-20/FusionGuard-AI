@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-base: #0B0F17;
+  --color-dark-surface: #131A26;
+  --color-dark-border: #1E293B;
+  
+  --color-neon-cyan: #00F0FF;
+  --color-neon-blue: #00A3FF;
+  --color-neon-red: #FF003C;
+  --color-neon-green: #39FF14;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-base text-gray-100 antialiased overflow-x-hidden;
+    background-image: linear-gradient(to right, rgba(30, 41, 59, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(30, 41, 59, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-dark-surface/50 backdrop-blur-md border border-dark-border shadow-lg;
+  }
+  
+  .glass-card {
+    @apply bg-dark-surface/80 backdrop-blur-sm border border-dark-border rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)];
+  }
+
+  .neon-text-cyan {
+    text-shadow: 0 0 5px theme('colors.neon-cyan'), 0 0 10px theme('colors.neon-cyan');
+  }
+
+  .neon-border-cyan {
+    box-shadow: 0 0 5px theme('colors.neon-cyan'), inset 0 0 5px theme('colors.neon-cyan');
+  }
+
+  .neon-border-red {
+    box-shadow: 0 0 5px theme('colors.neon-red'), inset 0 0 5px theme('colors.neon-red');
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0F17;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00F0FF;
+}
+
+/* Keyframes */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.animate-scanline {
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px theme('colors.neon-cyan'), inset 0 0 5px theme('colors.neon-cyan');
+  }
+  50% {
+    box-shadow: 0 0 20px theme('colors.neon-cyan'), inset 0 0 10px theme('colors.neon-cyan');
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 10px theme('colors.neon-red'), inset 0 0 5px theme('colors.neon-red');
+  }
+  50% {
+    box-shadow: 0 0 25px theme('colors.neon-red'), inset 0 0 10px theme('colors.neon-red');
+  }
+}
+
+.animate-pulse-red {
+  animation: pulse-red 1s infinite alternate;
+}
