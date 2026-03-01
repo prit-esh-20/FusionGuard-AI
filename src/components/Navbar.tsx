@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders } from 'lucide-react';
+import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders, Layers } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,11 +12,11 @@ const Navbar = () => {
 
     const publicLinks = [
         { name: 'Home', path: '/', icon: Shield },
+        { name: 'Architecture', path: '/architecture', icon: Layers },
         { name: 'About', path: '/about', icon: Terminal },
     ];
 
     const userLinks = [
-        { name: 'Home', path: '/', icon: Shield },
         { name: 'Dashboard', path: '/dashboard', icon: Cpu },
         { name: 'Alerts', path: '/alerts', icon: ShieldAlert },
         { name: 'Results', path: '/results', icon: Activity },
@@ -45,7 +45,10 @@ const Navbar = () => {
         <nav className="fixed w-full z-50 glass-panel border-b-0 border-dark-border/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    <Link to="/" className="flex items-center space-x-2 group">
+                    <Link
+                        to={!isAuthenticated ? "/" : (role === 'admin' ? "/admin/dashboard" : "/dashboard")}
+                        className="flex items-center space-x-2 group"
+                    >
                         <Shield className="w-8 h-8 text-neon-cyan animate-pulse-glow rounded-full" />
                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-wider group-hover:neon-text-cyan transition-all">
                             FusionGuard AI

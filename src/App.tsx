@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Landing from './pages/public/Landing';
+import Architecture from './pages/public/Architecture';
 import Alerts from './pages/public/Alerts';
 import Results from './pages/public/Results';
 import About from './pages/public/About';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/" element={<MainLayout />}>
               {/* Public Routes */}
               <Route index element={<Landing />} />
+              <Route path="architecture" element={<Architecture />} />
               <Route path="about" element={<About />} />
               <Route path="login" element={<Login />} />
 

@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Eye, Cpu, BellRing, Activity } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const FeatureCard = ({ icon: Icon, title, desc, delay }: any) => (
@@ -73,7 +74,17 @@ const PipelineNode = ({ label, delay, icon: Icon, isLast, index }: any) => (
 );
 
 const Landing = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, role } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            const dashboardPath = role === 'admin' ? '/admin/dashboard' : '/dashboard';
+            navigate(dashboardPath);
+        }
+    }, [isAuthenticated, role, navigate]);
+
+    if (isAuthenticated) return null;
 
     return (
         <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-40">

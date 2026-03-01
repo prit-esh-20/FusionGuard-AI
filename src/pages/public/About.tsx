@@ -1,7 +1,22 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Zap, Cpu, Activity, Layout, Network, HardDrive, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const About = () => {
+    const { isAuthenticated, role } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            const dashboardPath = role === 'admin' ? '/admin/dashboard' : '/dashboard';
+            navigate(dashboardPath);
+        }
+    }, [isAuthenticated, role, navigate]);
+
+    if (isAuthenticated) return null;
+
     const fadeIn = {
         initial: { opacity: 0, y: 20 },
         whileInView: { opacity: 1, y: 0 },
