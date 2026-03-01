@@ -1,215 +1,232 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Camera, Activity, Wifi, ShieldAlert, Cpu,
-    ThermometerSun, Target, Hexagon, Volume2, VolumeX, TerminalSquare
-} from 'lucide-react';
+import { Camera, Battery, Wifi, Clock, AlertTriangle, ShieldCheck, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-// Simulated Telemetry Data Hook
-const useTelemetry = () => {
-    const [data, setData] = useState({
-        fps: 30,
-        latency: 45,
-        thermalTemp: 22.5,
-        distance: 4.2,
-        servoAngle: 90,
-        mlProb: 0.1,
-        isHumanDetected: false,
-        patrolMode: 'Active Scanning',
-    });
+const UserDashboard = () => {
+    const navigate = useNavigate();
+
+    // Simulated simple state
+    const [battery] = useState(78);
+    const [status] = useState('Patrolling'); // Patrolling, Idle, Charging, Alert Mode
+    const [network] = useState('Online');
+    const [lastActivity] = useState('Last sweep: 2 mins ago');
+    const [fps, setFps] = useState(30);
+    const [latency, setLatency] = useState(42);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setData(prev => {
-                // Randomly simulate an alert event
-                const simulateAlert = Math.random() > 0.95;
-
-                return {
-                    fps: Math.round(28 + Math.random() * 5),
-                    latency: Math.round(40 + Math.random() * 15),
-                    thermalTemp: simulateAlert ? 36.5 : 22 + Math.random(),
-                    distance: simulateAlert ? 1.5 : 4 + Math.random() * 2,
-                    servoAngle: (prev.servoAngle + 5) % 180,
-                    mlProb: simulateAlert ? 0.96 : Math.random() * 0.2,
-                    isHumanDetected: simulateAlert,
-                    patrolMode: simulateAlert ? 'Target Logged' : 'Active Scanning'
-                };
-            });
-        }, 1000);
+            setFps(Math.round(28 + Math.random() * 4));
+            setLatency(Math.round(40 + Math.random() * 8));
+        }, 1500);
         return () => clearInterval(interval);
     }, []);
 
-    return data;
-};
+    // Simulated alerts
+    const alerts = [
+        { id: 1, time: '10:42 AM', desc: 'Motion detected in Sector Alpha', severity: 'warning', status: 'Logged' },
+        { id: 2, time: '10:15 AM', desc: 'Routine scan completed', severity: 'info', status: 'Verified' },
+        { id: 3, time: '09:30 AM', desc: 'Unauthorized entry attempt', severity: 'critical', status: 'Logged' },
+        { id: 4, time: '08:45 AM', desc: 'System boot sequence clear', severity: 'info', status: 'Verified' },
+        { id: 5, time: '08:00 AM', desc: 'Scheduled maintenance check', severity: 'info', status: 'Verified' },
+    ];
 
-const TelemetryNode = ({ icon: Icon, label, value, unit, isAlert }: any) => (
-    <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors ${isAlert ? 'bg-red-500/10 border-neon-red neon-border-red animate-pulse-red' : 'glass-panel border-dark-border'}`}>
-        <div className="flex items-center space-x-3">
-            <Icon className={`w-5 h-5 ${isAlert ? 'text-neon-red' : 'text-neon-cyan'}`} />
-            <span className="text-gray-400 font-mono text-sm uppercase">{label}</span>
-        </div>
-        <div className="text-right">
-            <span className={`text-xl font-bold font-mono ${isAlert ? 'text-white' : 'text-neon-cyan'}`}>{value}</span>
-            <span className="text-xs text-gray-500 ml-1">{unit}</span>
-        </div>
-    </div>
-);
-
-const UserDashboard = () => {
-    const t = useTelemetry();
-    const [soundEnabled, setSoundEnabled] = useState(false);
-    const [logs, setLogs] = useState<{ time: string, msg: string, type: 'info' | 'alert' }[]>([]);
-
-    useEffect(() => {
-        const time = new Date().toLocaleTimeString();
-        if (t.isHumanDetected) {
-            setLogs(prev => [{ time, msg: `CRITICAL: Human heat signature confirmed via ML (Prob: ${(t.mlProb * 100).toFixed(1)}%)`, type: 'alert' as const }, ...prev].slice(0, 10));
-        } else if (Math.random() > 0.8) {
-            setLogs(prev => [{ time, msg: `SYSTEM: Sensor sweep completed at ${t.servoAngle}°`, type: 'info' as const }, ...prev].slice(0, 10));
+    const getSeverityStyles = (severity: string) => {
+        switch (severity) {
+            case 'critical': return 'border-neon-red/50 bg-neon-red/10 text-neon-red';
+            case 'warning': return 'border-yellow-500/50 bg-yellow-500/10 text-yellow-500';
+            case 'info': return 'border-neon-blue/50 bg-neon-blue/10 text-neon-blue';
+            default: return 'border-dark-border text-gray-400';
         }
-    }, [t.isHumanDetected, t.servoAngle, t.mlProb]);
+    };
+
+    const getSeverityIcon = (severity: string) => {
+        switch (severity) {
+            case 'critical': return <AlertTriangle className="w-4 h-4 text-neon-red" />;
+            case 'warning': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+            case 'info': return <Info className="w-4 h-4 text-neon-blue" />;
+            default: return null;
+        }
+    };
 
     return (
-        <div className="flex flex-col h-full container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-            <div className="flex flex-col space-y-1">
-                <h1 className="text-3xl font-extrabold text-white tracking-widest relative inline-block w-fit">
-                    OPERATOR DASHBOARD
-                    <motion.div
-                        className="absolute -bottom-2 left-0 h-0.5 bg-neon-cyan"
-                        initial={{ width: 0 }}
-                        animate={{ width: '100%' }}
-                        transition={{ duration: 1 }}
-                    />
-                </h1>
-                <span className="text-neon-cyan/80 text-sm font-mono tracking-widest uppercase mt-4 block">
-                    Monitoring Interface
-                </span>
+        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto flex flex-col">
+
+            <div className="mb-8">
+                <h1 className="text-3xl font-black text-white uppercase tracking-tight">Operator Dashboard</h1>
+                <p className="text-sm text-gray-400 font-medium">Real-time perimeter monitoring and system status</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
-                {/* LEFT: Live Camera Feed */}
-                <div className="lg:col-span-2 flex flex-col space-y-4">
-                    <div className={`relative flex-grow glass-card border-2 overflow-hidden flex flex-col ${t.isHumanDetected ? 'border-neon-red animate-pulse-red' : 'border-dark-border'}`}>
-                        {/* Top Bar overlay */}
-                        <div className="absolute top-0 w-full p-4 flex justify-between items-start z-10 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
-                            <div className="flex items-center space-x-2">
-                                <span className={`w-3 h-3 rounded-full animate-pulse ${t.isHumanDetected ? 'bg-neon-red' : 'bg-neon-green'}`} />
-                                <span className="text-white font-mono font-bold tracking-widest text-sm uppercase drop-shadow-md">
-                                    {t.isHumanDetected ? '! INTRUSION DETECTED !' : 'LIVE FEED: ESP32-CAM [SEC-01]'}
-                                </span>
-                            </div>
-                            <div className="flex flex-col items-end space-y-1">
-                                <span className="text-xs font-mono text-neon-cyan bg-black/50 px-2 py-1 rounded">FPS: {t.fps}</span>
-                                <span className="text-xs font-mono text-neon-cyan bg-black/50 px-2 py-1 rounded">LATENCY: {t.latency}ms</span>
-                            </div>
-                        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-6 lg:gap-8 flex-grow">
 
-                        {/* Simulated Video Placeholder */}
-                        <div className="flex-grow bg-black relative flex items-center justify-center">
-                            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/tv-noise.png')] animate-pulse" />
-                            <Camera className="w-24 h-24 text-gray-800" />
+                {/* LEFT COLUMN: ROBOT STATUS */}
+                <div className="flex flex-col space-y-6 order-2 lg:order-1">
+                    <div className="glass-card p-6 border-dark-border flex flex-col h-full rounded-2xl shadow-glass relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-neon-cyan/5 rounded-full blur-3xl pointer-events-none" />
 
-                            {/* Crosshair Overlay */}
-                            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-30">
-                                <div className="w-64 h-64 border border-neon-cyan rounded-full border-dashed animate-[spin_10s_linear_infinite]" />
-                                <div className="w-full h-px bg-neon-cyan/20 absolute" />
-                                <div className="h-full w-px bg-neon-cyan/20 absolute" />
+                        <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center">
+                            <ShieldCheck className="w-4 h-4 mr-2 text-neon-cyan" />
+                            Robot Status
+                        </h2>
+
+                        <div className="space-y-8 relative z-10 flex-grow">
+                            {/* Current Mode */}
+                            <div>
+                                <span className="block text-xs font-mono text-gray-500 uppercase mb-2">Current Mode</span>
+                                <div className={`inline-flex items-center px-4 py-2 rounded-lg border font-bold text-sm tracking-widest uppercase transition-colors ${status === 'Patrolling' ? 'bg-neon-cyan/10 border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.2)]' :
+                                        status === 'Alert Mode' ? 'bg-neon-red/10 border-neon-red text-neon-red shadow-[0_0_15px_rgba(255,50,50,0.2)] animate-pulse' :
+                                            'bg-dark-base border-dark-border text-gray-300'
+                                    }`}>
+                                    {status === 'Patrolling' && <span className="w-2 h-2 rounded-full bg-neon-cyan mr-2 animate-ping" />}
+                                    {status === 'Alert Mode' && <span className="w-2 h-2 rounded-full bg-neon-red mr-2 animate-ping" />}
+                                    {status}
+                                </div>
                             </div>
 
-                            {/* ML Bounding Box simulation */}
-                            <AnimatePresence>
-                                {t.isHumanDetected && (
+                            {/* Battery Level */}
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-xs font-mono text-gray-500 uppercase flex items-center">
+                                        <Battery className="w-3.5 h-3.5 mr-1" /> Power Core
+                                    </span>
+                                    <span className="text-sm font-bold text-white font-mono">{battery}%</span>
+                                </div>
+                                <div className="h-2 w-full bg-dark-base rounded-full overflow-hidden border border-dark-border">
                                     <motion.div
-                                        initial={{ opacity: 0, scale: 1.2 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        className="absolute w-48 h-64 border-2 border-neon-red bg-red-500/10 z-20 flex flex-col justify-end p-1 shadow-red"
-                                    >
-                                        <span className="bg-neon-red text-black text-xs font-bold px-1 w-fit">PERSON {(t.mlProb * 100).toFixed(0)}%</span>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
+                                        className="h-full bg-neon-cyan"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${battery}%` }}
+                                        transition={{ duration: 1, ease: "easeOut" }}
+                                    />
+                                </div>
+                            </div>
 
-                    {/* BOTTOM LEFT: Detection Pipeline Visualizer */}
-                    <div className="glass-panel p-4 rounded-xl border border-dark-border flex items-center justify-between">
-                        <h3 className="text-xs text-gray-400 font-mono uppercase w-24">Fusion Pipeline</h3>
-                        <div className="flex-1 flex justify-between items-center px-4">
-                            <div className={`flex flex-col items-center ${t.thermalTemp > 30 ? 'text-neon-red animate-pulse' : 'text-neon-cyan'}`}>
-                                <ThermometerSun className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] uppercase font-bold text-center">Thermal</span>
+                            {/* Network Status */}
+                            <div>
+                                <span className="block text-xs font-mono text-gray-500 uppercase mb-2 flex items-center">
+                                    <Wifi className="w-3.5 h-3.5 mr-1" /> Connection Link
+                                </span>
+                                <div className="flex items-center space-x-2 bg-dark-base px-3 py-2 rounded-lg border border-dark-border w-fit">
+                                    <span className={`w-2.5 h-2.5 rounded-full ${network === 'Online' ? 'bg-neon-green shadow-[0_0_8px_rgba(0,255,100,0.8)]' : 'bg-red-500'}`} />
+                                    <span className="text-sm font-bold text-gray-300 tracking-wider">{network}</span>
+                                </div>
                             </div>
-                            <div className={`h-px flex-1 mx-2 ${t.isHumanDetected ? 'bg-neon-red' : 'bg-dark-border'}`} />
-                            <div className={`flex flex-col items-center ${t.distance < 2.0 ? 'text-neon-red animate-pulse' : 'text-neon-cyan'}`}>
-                                <Activity className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] uppercase font-bold text-center">Ultrasonic</span>
-                            </div>
-                            <div className={`h-px flex-1 mx-2 ${t.isHumanDetected ? 'bg-neon-red' : 'bg-dark-border'}`} />
-                            <div className={`flex flex-col items-center ${t.mlProb > 0.8 ? 'text-neon-red animate-pulse' : 'text-neon-cyan'}`}>
-                                <Cpu className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] uppercase font-bold text-center">Vision ML</span>
-                            </div>
-                            <div className={`h-px flex-1 mx-2 ${t.isHumanDetected ? 'bg-neon-red line-glow-red' : 'bg-dark-border'}`} />
-                            <div className={`flex flex-col items-center ${t.isHumanDetected ? 'text-neon-red bg-red-500/20 p-2 rounded animate-pulse-red' : 'text-gray-600'}`}>
-                                <ShieldAlert className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] uppercase font-bold text-center">Alert</span>
+
+                            {/* Last Activity */}
+                            <div>
+                                <span className="block text-xs font-mono text-gray-500 uppercase mb-2 flex items-center">
+                                    <Clock className="w-3.5 h-3.5 mr-1" /> Operational Log
+                                </span>
+                                <p className="text-sm text-gray-300 font-medium">{lastActivity}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* RIGHT: Telemetry & Logs */}
-                <div className="flex flex-col space-y-4 h-full">
-                    {/* Real-time Telemetry */}
-                    <div className="glass-card p-4 border border-dark-border flex-1">
-                        <div className="flex justify-between items-center mb-4 pb-2 border-b border-dark-border">
-                            <h3 className="text-sm font-bold text-white flex items-center bg-clip-text text-transparent bg-gradient-to-r from-neon-blue to-neon-cyan">
-                                <Hexagon className="w-4 h-4 mr-2 text-neon-cyan" />
-                                SYSTEM TELEMETRY
-                            </h3>
-                            <button onClick={() => setSoundEnabled(!soundEnabled)} className="text-gray-400 hover:text-white transition-colors">
-                                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                            </button>
-                        </div>
-
-                        <div className="space-y-3">
-                            <TelemetryNode
-                                icon={Target} label="Patrol Mode" value={t.patrolMode} unit=""
-                                isAlert={t.isHumanDetected}
-                            />
-                            <TelemetryNode
-                                icon={ThermometerSun} label="IR Array Max" value={t.thermalTemp.toFixed(1)} unit="°C"
-                                isAlert={t.thermalTemp > 30}
-                            />
-                            <TelemetryNode
-                                icon={Activity} label="Proximity" value={t.distance.toFixed(1)} unit="m"
-                                isAlert={t.distance < 2.0}
-                            />
-                            <TelemetryNode
-                                icon={Cpu} label="AI Confidence" value={(t.mlProb * 100).toFixed(1)} unit="%"
-                                isAlert={t.mlProb > 0.8}
-                            />
-                            <TelemetryNode
-                                icon={Wifi} label="Servo Pan Angle" value={t.servoAngle} unit="°"
-                                isAlert={false}
-                            />
-                        </div>
+                {/* CENTER COLUMN: LIVE MONITORING */}
+                <div className="flex flex-col space-y-4 order-1 lg:order-2">
+                    <div className="flex items-center justify-between mb-2">
+                        <h2 className="text-lg font-black text-white uppercase tracking-wider">Live Monitoring</h2>
                     </div>
 
-                    {/* Event Logs Terminal */}
-                    <div className="glass-card flex-1 border border-dark-border overflow-hidden flex flex-col max-h-64">
-                        <div className="bg-dark-surface p-2 border-b border-dark-border flex items-center space-x-2">
-                            <TerminalSquare className="w-4 h-4 text-neon-cyan" />
-                            <span className="text-xs font-mono text-gray-400 uppercase">SYS.LOG</span>
+                    <div className="glass-card border-none rounded-2xl overflow-hidden flex flex-col shadow-2xl relative group h-[400px] lg:h-full min-h-[500px]">
+                        {/* Outer Glow */}
+                        <div className="absolute inset-0 border-2 border-neon-cyan/30 rounded-2xl pointer-events-none group-hover:border-neon-cyan/60 transition-colors duration-500 z-20" />
+                        <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(0,240,255,0.05)] pointer-events-none z-10" />
+
+                        {/* Top Bar overlay */}
+                        <div className="absolute top-0 w-full p-4 flex justify-between items-start z-30 bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-none">
+                            <div className="flex items-center space-x-3 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-dark-border/50">
+                                <span className="w-2.5 h-2.5 rounded-full bg-neon-green animate-pulse" />
+                                <span className="text-white font-mono font-bold tracking-widest text-xs uppercase drop-shadow-md">
+                                    LIVE – SEC-01
+                                </span>
+                            </div>
+                            <div className="flex space-x-2">
+                                <span className="text-[10px] font-mono font-bold text-neon-cyan bg-black/60 backdrop-blur-sm border border-neon-cyan/20 px-2.5 py-1 rounded">FPS: {fps}</span>
+                                <span className="text-[10px] font-mono font-bold text-neon-cyan bg-black/60 backdrop-blur-sm border border-neon-cyan/20 px-2.5 py-1 rounded">LAT: {latency}ms</span>
+                            </div>
                         </div>
-                        <div className="flex-1 p-3 overflow-y-auto font-mono text-xs space-y-2 bg-black/50 custom-scrollbar flex flex-col-reverse">
-                            {logs.map((log, i) => (
-                                <div key={i} className={`flex items-start space-x-2 ${log.type === 'alert' ? 'text-neon-red' : 'text-neon-cyan'}`}>
-                                    <span className="opacity-50 shrink-0">[{log.time}]</span>
-                                    <span>{log.msg}</span>
+
+                        {/* Simulated Video Feed Area */}
+                        <div className="flex-grow bg-[#05080f] relative flex items-center justify-center overflow-hidden">
+                            {/* Static noise texture */}
+                            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/tv-noise.png')]" />
+
+                            {/* Scanning line animation */}
+                            <motion.div
+                                className="absolute top-0 left-0 right-0 h-1 bg-neon-cyan/20 blur-[2px] z-10"
+                                animate={{ top: ["0%", "100%", "0%"] }}
+                                transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+                            />
+
+                            <Camera className="w-16 h-16 text-gray-800/50 absolute z-0" />
+
+                            {/* Crosshair Overlay */}
+                            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-40 z-20">
+                                {/* Center target */}
+                                <div className="w-32 h-32 border border-neon-cyan/30 rounded-full flex items-center justify-center">
+                                    <div className="w-1 h-1 bg-neon-cyan rounded-full" />
                                 </div>
-                            ))}
+                                <div className="w-40 h-40 border border-neon-cyan/20 rounded-full border-dashed animate-[spin_20s_linear_infinite] absolute" />
+
+                                {/* Guide lines */}
+                                <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-neon-cyan/10 to-transparent absolute" />
+                                <div className="h-full w-[1px] bg-gradient-to-b from-transparent via-neon-cyan/10 to-transparent absolute" />
+                            </div>
+
+                            {/* Timestamp overlay bottom left */}
+                            <div className="absolute bottom-4 left-4 z-30 pointer-events-none">
+                                <span className="text-[10px] font-mono text-white/50 bg-black/50 px-2 py-1 rounded">
+                                    {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* RIGHT COLUMN: RECENT ALERTS */}
+                <div className="flex flex-col space-y-6 order-3 lg:order-3">
+                    <div className="glass-card p-6 border-dark-border flex flex-col h-full rounded-2xl shadow-glass">
+                        <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center">
+                            <AlertTriangle className="w-4 h-4 mr-2 text-yellow-500" />
+                            Recent Alerts
+                        </h2>
+
+                        <div className="space-y-4 overflow-y-auto custom-scrollbar pr-2 flex-grow max-h-[500px]">
+                            <AnimatePresence>
+                                {alerts.map((alert, idx) => (
+                                    <motion.div
+                                        key={alert.id}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className={`p-4 rounded-xl border ${getSeverityStyles(alert.severity)} bg-opacity-5 backdrop-blur-sm relative overflow-hidden`}
+                                    >
+                                        <div className="flex justify-between items-start mb-2 relative z-10">
+                                            <span className="text-[10px] font-mono opacity-70 flex items-center gap-1">
+                                                {getSeverityIcon(alert.severity)}
+                                                {alert.time}
+                                            </span>
+                                            <span className="text-[9px] font-bold uppercase tracking-widest bg-black/40 px-2 py-0.5 rounded border border-current opacity-80">
+                                                {alert.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm font-medium leading-snug relative z-10">
+                                            {alert.desc}
+                                        </p>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+
+                        <div className="mt-6 pt-6 border-t border-dark-border/50">
+                            <button
+                                onClick={() => navigate('/alerts')}
+                                className="w-full py-3 px-4 bg-dark-base border border-dark-border rounded-xl text-xs font-bold text-gray-300 uppercase tracking-widest hover:border-neon-cyan hover:text-neon-cyan transition-colors"
+                            >
+                                View All Alerts
+                            </button>
                         </div>
                     </div>
                 </div>
