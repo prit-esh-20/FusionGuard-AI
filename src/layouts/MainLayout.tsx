@@ -1,10 +1,11 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
 const MainLayout = () => {
     const { isAuthenticated } = useAuth();
+    const location = useLocation();
 
     return (
         <div className="min-h-screen bg-dark-base flex flex-col relative text-gray-100 font-sans">

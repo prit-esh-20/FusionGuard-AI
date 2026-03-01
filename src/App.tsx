@@ -8,6 +8,8 @@ import About from './pages/public/About';
 import Login from './pages/auth/Login';
 import UserDashboard from './pages/dashboards/UserDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
+import Recordings from './pages/dashboards/Recordings';
+import UserLogs from './pages/dashboards/UserLogs';
 import { AuthProvider } from './context/AuthContext';
 import { SystemProvider } from './context/SystemContext';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
@@ -25,23 +27,24 @@ function App() {
             <Route path="/" element={<MainLayout />}>
               {/* Public Routes */}
               <Route index element={<Landing />} />
-              <Route path="architecture" element={<Architecture />} />
-              <Route path="about" element={<About />} />
-              <Route path="login" element={<Login />} />
+              <Route path="/architecture" element={<Architecture />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/login" element={<Login />} />
 
               {/* User Routes */}
-              <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><UserDashboard /></RoleProtectedRoute>} />
-              <Route path="alerts" element={<RoleProtectedRoute allowedRoles={['user']}><Alerts /></RoleProtectedRoute>} />
-              <Route path="results" element={<RoleProtectedRoute allowedRoles={['user']}><Results /></RoleProtectedRoute>} />
+              <Route path="/dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><UserDashboard /></RoleProtectedRoute>} />
+              <Route path="/alerts" element={<RoleProtectedRoute allowedRoles={['user']}><Alerts /></RoleProtectedRoute>} />
+              <Route path="/recordings" element={<RoleProtectedRoute allowedRoles={['user']}><Recordings /></RoleProtectedRoute>} />
+              <Route path="/logs" element={<RoleProtectedRoute allowedRoles={['user']}><UserLogs /></RoleProtectedRoute>} />
 
               {/* Admin Routes */}
-              <Route path="admin" element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="admin/dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
-              <Route path="admin/alerts" element={<RoleProtectedRoute allowedRoles={['admin']}><Alerts /></RoleProtectedRoute>} />
-              <Route path="admin/results" element={<RoleProtectedRoute allowedRoles={['admin']}><Results /></RoleProtectedRoute>} />
-              <Route path="admin/system-controls" element={<RoleProtectedRoute allowedRoles={['admin']}><SystemControls /></RoleProtectedRoute>} />
-              <Route path="admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><Settings /></RoleProtectedRoute>} />
-              <Route path="admin/user-management" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
+              <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="/admin/dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
+              <Route path="/admin/alerts" element={<RoleProtectedRoute allowedRoles={['admin']}><Alerts /></RoleProtectedRoute>} />
+              <Route path="/admin/results" element={<RoleProtectedRoute allowedRoles={['admin']}><Results /></RoleProtectedRoute>} />
+              <Route path="/admin/system-controls" element={<RoleProtectedRoute allowedRoles={['admin']}><SystemControls /></RoleProtectedRoute>} />
+              <Route path="/admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><Settings /></RoleProtectedRoute>} />
+              <Route path="/admin/user-management" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
             </Route>
 
             {/* Fallbacks */}

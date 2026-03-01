@@ -1,12 +1,11 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders, Layers } from 'lucide-react';
+import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders, Layers, Video } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const location = useLocation();
     const navigate = useNavigate();
     const { isAuthenticated, role, logout } = useAuth();
 
@@ -19,7 +18,8 @@ const Navbar = () => {
     const userLinks = [
         { name: 'Dashboard', path: '/dashboard', icon: Cpu },
         { name: 'Alerts', path: '/alerts', icon: ShieldAlert },
-        { name: 'Results', path: '/results', icon: Activity },
+        { name: 'Recordings', path: '/recordings', icon: Video },
+        { name: 'Logs', path: '/logs', icon: Activity },
     ];
 
     const adminLinks = [
@@ -68,35 +68,36 @@ const Navbar = () => {
                     {/* Desktop Nav */}
                     <div className="hidden lg:flex items-center space-x-6">
                         <AnimatePresence mode="popLayout">
-                            {currentLinks.map((link) => {
-                                const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
-                                return (
-                                    <motion.div
-                                        key={link.name}
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, scale: 0.95 }}
-                                        transition={{ duration: 0.2 }}
+                            {currentLinks.map((link) => (
+                                <motion.div
+                                    key={link.name}
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <NavLink
+                                        to={link.path}
+                                        className={({ isActive }) => `relative group flex items-center space-x-1 ${isActive ? 'text-neon-cyan' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <Link
-                                            to={link.path}
-                                            className="relative group flex items-center space-x-1"
-                                        >
-                                            <span className={`text-xs font-bold uppercase tracking-widest transition-colors ${isActive ? 'text-neon-cyan' : 'text-gray-400 group-hover:text-white'}`}>
-                                                {link.name}
-                                            </span>
-                                            {isActive && (
-                                                <motion.div
-                                                    layoutId="nav-underline"
-                                                    className="absolute -bottom-6 left-0 right-0 h-0.5 bg-neon-cyan"
-                                                    initial={false}
-                                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                                />
-                                            )}
-                                        </Link>
-                                    </motion.div>
-                                );
-                            })}
+                                        {({ isActive }) => (
+                                            <>
+                                                <span className="text-xs font-bold uppercase tracking-widest transition-colors">
+                                                    {link.name}
+                                                </span>
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="nav-underline"
+                                                        className="absolute -bottom-6 left-0 right-0 h-0.5 bg-neon-cyan"
+                                                        initial={false}
+                                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                    />
+                                                )}
+                                            </>
+                                        )}
+                                    </NavLink>
+                                </motion.div>
+                            ))}
                         </AnimatePresence>
 
                         {isAuthenticated ? (
@@ -141,21 +142,17 @@ const Navbar = () => {
                         className="lg:hidden glass-panel border-t border-dark-border overflow-hidden"
                     >
                         <div className="px-4 pt-4 pb-6 space-y-2">
-                            {currentLinks.map((link) => {
-                                const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
-                                return (
-                                    <Link
-                                        key={link.name}
-                                        to={link.path}
-                                        onClick={handleDragClose}
-                                        className={`flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${isActive ? 'text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/20' : 'text-gray-400 hover:text-white hover:bg-dark-surface'
-                                            }`}
-                                    >
-                                        <link.icon className="w-4 h-4" />
-                                        <span>{link.name}</span>
-                                    </Link>
-                                );
-                            })}
+                            {currentLinks.map((link) => (
+                                <NavLink
+                                    key={link.name}
+                                    to={link.path}
+                                    onClick={handleDragClose}
+                                    className={({ isActive }) => `flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${isActive ? 'text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/20' : 'text-gray-400 hover:text-white hover:bg-dark-surface'}`}
+                                >
+                                    <link.icon className="w-4 h-4" />
+                                    <span>{link.name}</span>
+                                </NavLink>
+                            ))}
 
                             {isAuthenticated ? (
                                 <button
