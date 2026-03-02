@@ -70,15 +70,7 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-dark-base">
-            {/* Animated Hex Grid Background */}
-            <div className="absolute inset-0 z-0 opacity-20"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-opacity='0' stroke='%2300F0FF' stroke-width='1'/%3E%3C/svg%3E")`,
-                    backgroundSize: '40px 40px',
-                    animation: 'scanline 20s linear infinite'
-                }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-base to-transparent z-0" />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-base via-dark-base/50 to-transparent z-0" />
 
             {/* Notification Toast */}
             <AnimatePresence>
