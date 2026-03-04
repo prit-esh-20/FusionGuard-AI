@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Home, Sliders, Activity, ShieldAlert, Menu } from 'lucide-react';
 import { useState } from 'react';
+import NeuralNetworkBackground from '../components/NeuralNetworkBackground';
 
 const SidebarLink = ({ to, icon: Icon, label, isActive }: { to: string; icon: any; label: string; isActive: boolean }) => (
     <Link
@@ -38,7 +39,8 @@ const DashboardLayout = ({ role }: { role: 'user' | 'admin' }) => {
     }
 
     return (
-        <div className="min-h-screen bg-dark-base flex flex-col md:flex-row text-gray-100 overflow-hidden">
+        <div className="min-h-screen bg-transparent flex flex-col md:flex-row text-gray-100 overflow-hidden">
+            <NeuralNetworkBackground />
             {/* Sidebar */}
             <motion.aside
                 initial={{ x: -300 }}

@@ -2,17 +2,16 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-
 const MainLayout = () => {
     const { isAuthenticated } = useAuth();
     const location = useLocation();
 
     return (
-        <div className="min-h-screen bg-dark-base flex flex-col relative text-gray-100 font-sans">
+        <div className={`min-h-screen ${isAuthenticated ? 'bg-transparent' : 'bg-dark-base'} flex flex-col relative text-gray-100 font-sans`}>
             <Navbar />
 
 
-            <main className="flex-grow pt-16 z-10 relative">
+            <main className="flex-grow pt-16 z-10 relative bg-transparent">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={location.pathname}
@@ -20,7 +19,7 @@ const MainLayout = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -15 }}
                         transition={{ duration: 0.3 }}
-                        className="w-full h-full"
+                        className="w-full h-full bg-transparent"
                     >
                         <Outlet />
                     </motion.div>

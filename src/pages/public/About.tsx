@@ -8,14 +8,7 @@ const About = () => {
     const { isAuthenticated, role } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            const dashboardPath = role === 'admin' ? '/admin/dashboard' : '/dashboard';
-            navigate(dashboardPath);
-        }
-    }, [isAuthenticated, role, navigate]);
-
-    if (isAuthenticated) return null;
+    // Allowed for authenticated users to show the backgroundsite-wide
 
     const fadeIn = {
         initial: { opacity: 0, y: 20 },

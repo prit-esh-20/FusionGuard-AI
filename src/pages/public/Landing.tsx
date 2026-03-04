@@ -77,14 +77,7 @@ const Landing = () => {
     const { isAuthenticated, role } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            const dashboardPath = role === 'admin' ? '/admin/dashboard' : '/dashboard';
-            navigate(dashboardPath);
-        }
-    }, [isAuthenticated, role, navigate]);
-
-    if (isAuthenticated) return null;
+    // Logged-on users can browse this with the neural background from MainLayout
 
     return (
         <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-40">

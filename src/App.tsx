@@ -13,6 +13,7 @@ import UserLogs from './pages/dashboards/UserLogs';
 import { AuthProvider } from './context/AuthContext';
 import { SystemProvider } from './context/SystemContext';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
+import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
 import SystemControls from './pages/admin/SystemControls';
 import Settings from './pages/admin/Settings';
@@ -25,26 +26,29 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<MainLayout />}>
-              {/* Public Routes */}
+              {/* Public Routes - No Neural Background */}
               <Route index element={<Landing />} />
               <Route path="/architecture" element={<Architecture />} />
               <Route path="/about" element={<About />} />
               <Route path="/login" element={<Login />} />
 
-              {/* User Routes */}
-              <Route path="/dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><UserDashboard /></RoleProtectedRoute>} />
-              <Route path="/alerts" element={<RoleProtectedRoute allowedRoles={['user']}><Alerts /></RoleProtectedRoute>} />
-              <Route path="/recordings" element={<RoleProtectedRoute allowedRoles={['user']}><Recordings /></RoleProtectedRoute>} />
-              <Route path="/logs" element={<RoleProtectedRoute allowedRoles={['user']}><UserLogs /></RoleProtectedRoute>} />
+              {/* Authenticated Routes - With Neural Background */}
+              <Route element={<AuthenticatedLayout />}>
+                {/* User Routes */}
+                <Route path="/dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><UserDashboard /></RoleProtectedRoute>} />
+                <Route path="/alerts" element={<RoleProtectedRoute allowedRoles={['user']}><Alerts /></RoleProtectedRoute>} />
+                <Route path="/recordings" element={<RoleProtectedRoute allowedRoles={['user']}><Recordings /></RoleProtectedRoute>} />
+                <Route path="/logs" element={<RoleProtectedRoute allowedRoles={['user']}><UserLogs /></RoleProtectedRoute>} />
 
-              {/* Admin Routes */}
-              <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="/admin/dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
-              <Route path="/admin/alerts" element={<RoleProtectedRoute allowedRoles={['admin']}><Alerts /></RoleProtectedRoute>} />
-              <Route path="/admin/results" element={<RoleProtectedRoute allowedRoles={['admin']}><Results /></RoleProtectedRoute>} />
-              <Route path="/admin/system-controls" element={<RoleProtectedRoute allowedRoles={['admin']}><SystemControls /></RoleProtectedRoute>} />
-              <Route path="/admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><Settings /></RoleProtectedRoute>} />
-              <Route path="/admin/user-management" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
+                {/* Admin Routes */}
+                <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="/admin/dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
+                <Route path="/admin/alerts" element={<RoleProtectedRoute allowedRoles={['admin']}><Alerts /></RoleProtectedRoute>} />
+                <Route path="/admin/results" element={<RoleProtectedRoute allowedRoles={['admin']}><Results /></RoleProtectedRoute>} />
+                <Route path="/admin/system-controls" element={<RoleProtectedRoute allowedRoles={['admin']}><SystemControls /></RoleProtectedRoute>} />
+                <Route path="/admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><Settings /></RoleProtectedRoute>} />
+                <Route path="/admin/user-management" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
+              </Route>
             </Route>
 
             {/* Fallbacks */}
