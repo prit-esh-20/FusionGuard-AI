@@ -7,7 +7,7 @@ const MainLayout = () => {
     const location = useLocation();
 
     return (
-        <div className={`min-h-screen ${isAuthenticated ? 'bg-transparent' : 'bg-dark-base'} flex flex-col relative text-gray-100 font-sans`}>
+        <div className={`min-h-screen ${isAuthenticated ? 'bg-transparent' : 'bg-dark-base'} flex flex-col relative text-slate-300 font-sans`}>
             <Navbar />
 
 

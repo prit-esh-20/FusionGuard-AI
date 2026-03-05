@@ -22,9 +22,11 @@
   --drop-shadow-neon-cyan: 0 0 8px rgba(0, 240, 255, 0.8);
   --drop-shadow-neon-green: 0 0 8px rgba(57, 255, 20, 0.8);
 
-  --font-sans: 'Orbitron', var(--font-orbitron), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: 'Orbitron', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-orbitron: 'Orbitron', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-orbitron);
 }
 
 @layer base {
@@ -37,19 +39,19 @@
 
   html,
   body {
-    @apply bg-dark-base text-gray-100 antialiased overflow-x-hidden;
-    font-family: var(--font-orbitron);
+    @apply bg-dark-base text-slate-300 antialiased overflow-x-hidden;
+    font-family: var(--font-inter);
     background-image: linear-gradient(to right, rgba(30, 41, 59, 0.1) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(30, 41, 59, 0.1) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
-  /* Extreme application: ensure every element inherits Orbitron */
-  * {
-    font-family: inherit;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-orbitron);
+    @apply font-semibold tracking-wider;
   }
 
-  /* Ensure form elements inherit the font */
+  /* Ensure form elements inherit the correct body font */
   button,
   input,
   optgroup,

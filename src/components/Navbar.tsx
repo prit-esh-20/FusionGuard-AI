@@ -50,7 +50,7 @@ const Navbar = () => {
                         className="flex items-center space-x-2 group"
                     >
                         <Shield className="w-8 h-8 text-neon-cyan animate-pulse-glow rounded-full" />
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-wider group-hover:neon-text-cyan transition-all">
+                        <span className="text-xl font-bold font-heading bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-[0.2em] group-hover:neon-text-cyan transition-all">
                             FusionGuard AI
                         </span>
                         {role === 'admin' && (
@@ -82,7 +82,7 @@ const Navbar = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <span className="text-xs font-bold uppercase tracking-widest transition-colors">
+                                                <span className="text-[10px] font-semibold font-heading uppercase tracking-[0.15em] transition-colors">
                                                     {link.name}
                                                 </span>
                                                 {isActive && (
@@ -150,7 +150,7 @@ const Navbar = () => {
                                     className={({ isActive }) => `flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${isActive ? 'text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/20' : 'text-gray-400 hover:text-white hover:bg-dark-surface'}`}
                                 >
                                     <link.icon className="w-4 h-4" />
-                                    <span>{link.name}</span>
+                                    <span className="font-heading tracking-widest">{link.name}</span>
                                 </NavLink>
                             ))}
 
