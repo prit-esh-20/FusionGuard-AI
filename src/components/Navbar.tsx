@@ -50,7 +50,7 @@ const Navbar = () => {
                         className="flex items-center space-x-2 group"
                     >
                         <Shield className="w-8 h-8 text-neon-cyan animate-pulse-glow rounded-full" />
-                        <span className="text-xl font-bold font-heading bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-[0.2em] group-hover:neon-text-cyan transition-all">
+                        <span className="text-xl font-bold font-heading bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-[0.25em] group-hover:neon-text-cyan transition-all">
                             FusionGuard AI
                         </span>
                         {role === 'admin' && (
@@ -82,7 +82,7 @@ const Navbar = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <span className="text-[10px] font-semibold font-heading uppercase tracking-[0.15em] transition-colors">
+                                                <span className="text-[10px] font-semibold font-heading uppercase tracking-[0.2em] transition-colors">
                                                     {link.name}
                                                 </span>
                                                 {isActive && (

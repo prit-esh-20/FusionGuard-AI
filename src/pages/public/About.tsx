@@ -31,7 +31,7 @@ const About = () => {
                         <span className="inline-block text-neon-cyan text-[10px] font-bold tracking-[0.4em] uppercase py-1 px-4 border border-neon-cyan/30 rounded-full bg-neon-cyan/5 shadow-[0_0_15px_rgba(0,240,255,0.1)]">
                             SYSTEM OVERVIEW
                         </span>
-                        <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-[0.05em]">
                             ABOUT THE PROJECT
                         </h1>
                     </div>
@@ -43,7 +43,7 @@ const About = () => {
                     >
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon-cyan/40 to-transparent" />
                         <div className="space-y-8 text-center md:text-left">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-[0.05em]">
                                 Autonomous Perimeter Defense
                             </h2>
                             <div className="text-gray-400 text-lg leading-[1.8] font-medium space-y-6 max-w-none">
@@ -66,7 +66,7 @@ const About = () => {
                 {/* 2️⃣ Core Capabilities Section */}
                 <motion.section {...fadeIn} className="space-y-16">
                     <div className="text-center space-y-4">
-                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
+                        <h2 className="text-3xl md:text-5xl font-bold text-white uppercase tracking-[0.05em]">
                             SYSTEM CAPABILITIES
                         </h2>
                         <div className="w-20 h-1 bg-neon-cyan/40 mx-auto rounded-full" />
@@ -118,7 +118,7 @@ const About = () => {
                 {/* 3️⃣ Technology Stack (Simplified) */}
                 <motion.section {...fadeIn} className="space-y-16 pt-10">
                     <div className="text-center space-y-4">
-                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
+                        <h2 className="text-3xl md:text-5xl font-bold text-white uppercase tracking-[0.05em]">
                             SYSTEM TECHNOLOGY
                         </h2>
                         <div className="w-20 h-1 bg-neon-cyan/40 mx-auto rounded-full" />
@@ -217,7 +217,7 @@ const About = () => {
                 <motion.section {...fadeIn} className="space-y-16">
                     <div className="text-center space-y-4">
                         <Users className="w-10 h-10 text-neon-cyan mx-auto mb-4 opacity-50" />
-                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
+                        <h2 className="text-3xl md:text-5xl font-bold text-white uppercase tracking-[0.05em]">
                             PROJECT TEAM
                         </h2>
                         <div className="w-20 h-1 bg-neon-cyan/40 mx-auto rounded-full" />
@@ -240,7 +240,7 @@ const About = () => {
                                     <span className="text-3xl font-black text-white relative z-10 group-hover:scale-110 transition-transform duration-500">{member.initials}</span>
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-xl font-bold text-white tracking-tight">{member.name}</h3>
+                                    <h3 className="text-xl font-bold text-white tracking-[0.05em]">{member.name}</h3>
                                     <p className="text-sm text-gray-500 font-bold uppercase tracking-widest">{member.role}</p>
                                 </div>
                             </motion.div>

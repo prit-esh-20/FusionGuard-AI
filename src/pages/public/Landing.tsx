@@ -32,7 +32,7 @@ const FeatureCard = ({ icon: Icon, title, desc, delay }: any) => (
                 <Icon className="w-9 h-9 text-neon-cyan" />
             </motion.div>
         </motion.div>
-        <h3 className="text-xl font-bold font-heading mb-3 text-white transition-colors duration-300 group-hover:text-neon-cyan tracking-wider">{title}</h3>
+        <h3 className="text-xl font-semibold font-heading mb-3 text-white transition-colors duration-300 group-hover:text-neon-cyan tracking-[0.1em]">{title}</h3>
         <p className="text-slate-300 font-medium text-sm leading-relaxed transition-colors duration-300 group-hover:text-white">{desc}</p>
         <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
     </motion.div>
@@ -62,7 +62,7 @@ const PipelineNode = ({ label, delay, icon: Icon, isLast, index }: any) => (
                 >
                     <Icon className="w-6 h-6 text-neon-blue mb-2 transition-colors duration-300 group-hover:text-neon-cyan" />
                 </motion.div>
-                <span className="text-[10px] font-bold font-heading uppercase text-center text-slate-400 group-hover:text-white transition-colors duration-300 tracking-wider font-heading">{label}</span>
+                <span className="text-[10px] font-bold font-heading uppercase text-center text-slate-400 group-hover:text-white transition-colors duration-300 tracking-[0.12em]">{label}</span>
             </motion.div>
         </motion.div>
         {!isLast && (
@@ -141,12 +141,12 @@ const Landing = () => {
                     )}
 
                     <div className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-bold font-heading tracking-[0.25em] text-slate-300 opacity-80 uppercase">FUSIONGUARD AI</h2>
-                        <h1 className="text-6xl md:text-8xl font-black font-heading tracking-[-0.02em] leading-none">
+                        <h2 className="text-2xl md:text-3xl font-semibold font-heading tracking-[0.25em] text-slate-300 opacity-80 uppercase">FUSIONGUARD AI</h2>
+                        <h1 className="text-6xl md:text-8xl font-bold font-heading tracking-[-0.01em] leading-none">
                             <span className="block bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-slate-500 pb-2">
                                 AUTONOMOUS
                             </span>
-                            <span className="block bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan via-neon-blue to-blue-700">
+                            <span className="block bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan via-neon-blue to-blue-700 pb-2">
                                 SECURITY
                             </span>
                         </h1>
@@ -248,7 +248,7 @@ const Landing = () => {
             <section className="space-y-20 pt-10">
                 <div className="text-center space-y-4 flex flex-col items-center">
                     <span className="text-[10px] font-mono text-neon-cyan/60 tracking-[0.5em] uppercase">Core Features</span>
-                    <h2 className="text-4xl md:text-5xl font-black font-heading text-white tracking-tight uppercase">System Highlights</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold font-heading text-white tracking-[0.1em] uppercase">System Highlights</h2>
                     <div className="w-16 h-1 px-1 bg-gradient-to-r from-transparent via-neon-cyan to-transparent rounded-full" />
                 </div>
 
@@ -264,7 +264,7 @@ const Landing = () => {
             <section className="space-y-24 pb-32">
                 <div className="text-center space-y-4 flex flex-col items-center">
                     <span className="text-[10px] font-mono text-neon-blue/60 tracking-[0.5em] uppercase">System Workflow</span>
-                    <h2 className="text-4xl md:text-5xl font-black font-heading text-white tracking-tight uppercase">Operational Pipeline</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold font-heading text-white tracking-[0.1em] uppercase">Operational Pipeline</h2>
                     <div className="w-16 h-1 bg-gradient-to-r from-transparent via-neon-blue to-transparent rounded-full" />
                     <p className="text-slate-300 max-w-2xl mx-auto pt-2 font-medium">Clear system logic validating security from sensor scan to alert dispatch.</p>
                 </div>

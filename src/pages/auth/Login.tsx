@@ -131,7 +131,7 @@ const Login = () => {
                         <div className="absolute inset-0 rounded-full border border-neon-cyan/30 border-r-transparent animate-spin" style={{ animationDuration: '3s' }} />
                     </motion.div>
 
-                    <h2 className="text-3xl font-extrabold text-white tracking-widest relative inline-block">
+                    <h2 className="text-3xl font-bold text-white tracking-[0.1em] relative inline-block font-heading">
                         AUTHENTICATION
                         <motion.div
                             className="absolute -bottom-2 left-0 h-0.5 bg-neon-cyan"

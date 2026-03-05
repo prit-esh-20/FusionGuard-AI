@@ -26,7 +26,7 @@ const ArchCard = ({ icon: Icon, title, desc, delay, accent = 'cyan' }: any) => {
                 <Icon className="w-8 h-8 transition-transform duration-300 group-hover:scale-110" />
             </div>
 
-            <h3 className="text-xl font-bold text-white mb-3 tracking-tight">{title}</h3>
+            <h3 className="text-xl font-bold text-white mb-3 tracking-[0.05em]">{title}</h3>
             <p className="text-gray-400 leading-relaxed text-sm">
                 {desc}
             </p>
@@ -36,7 +36,7 @@ const ArchCard = ({ icon: Icon, title, desc, delay, accent = 'cyan' }: any) => {
 
 const SectionHeader = ({ title, subtitle }: { title: string, subtitle: string }) => (
     <div className="flex flex-col items-center mb-4 text-center relative z-10 px-4">
-        <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-[0.05em] mb-4">
             {title}
         </h2>
         <p className="max-w-2xl text-gray-400 text-base leading-relaxed">
@@ -89,7 +89,7 @@ const Architecture = () => {
                         <span>System Structure</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter uppercase leading-none">
+                    <h1 className="text-4xl md:text-7xl font-bold text-white tracking-[-0.01em] uppercase leading-none">
                         ENGINEERING <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-blue">BLUEPRINT</span>
                     </h1>
 

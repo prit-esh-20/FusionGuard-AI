@@ -52,7 +52,7 @@ const UserDashboard = () => {
     return (
         <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto flex flex-col">
             <div className="mb-6 lg:mb-10 text-center lg:text-left">
-                <h1 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]">Operator Dashboard</h1>
+                <h1 className="text-2xl md:text-3xl font-bold font-heading text-white uppercase tracking-[0.1em] drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]">Operator Dashboard</h1>
                 <p className="text-sm text-neon-cyan/70 font-mono mt-2 tracking-wide uppercase">Secure Facilities Monitoring Console</p>
             </div>
 
@@ -60,7 +60,7 @@ const UserDashboard = () => {
 
                 {/* CENTER COLUMN: LIVE MONITORING (Order 1 on mobile, 2 on desktop) */}
                 <div className="flex flex-col space-y-4 order-1 lg:order-2 w-full lg:px-2">
-                    <h2 className="text-sm font-bold text-white uppercase tracking-[0.2em] flex items-center pl-1">
+                    <h2 className="text-sm font-semibold font-heading text-white uppercase tracking-[0.2em] flex items-center pl-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan mr-3 shadow-[0_0_10px_rgba(0,240,255,0.8)] animate-pulse"></span>
                         Live Monitoring
                     </h2>
@@ -112,7 +112,7 @@ const UserDashboard = () => {
 
                 {/* LEFT COLUMN: ROBOT STATUS */}
                 <div className="flex flex-col space-y-4 order-2 lg:order-1 w-full lg:pt-[1.75rem]">
-                    <h2 className="text-sm font-bold text-white uppercase tracking-[0.2em] flex items-center pl-1">
+                    <h2 className="text-sm font-semibold font-heading text-white uppercase tracking-[0.2em] flex items-center pl-1">
                         <ShieldCheck className="w-4 h-4 mr-2 text-neon-cyan" />
                         Robot Status
                     </h2>
@@ -174,7 +174,7 @@ const UserDashboard = () => {
 
                 {/* RIGHT COLUMN: RECENT ALERTS */}
                 <div className="flex flex-col space-y-4 order-3 lg:pt-[1.75rem] w-full">
-                    <h2 className="text-sm font-bold text-white uppercase tracking-[0.2em] flex items-center pl-1">
+                    <h2 className="text-sm font-semibold font-heading text-white uppercase tracking-[0.2em] flex items-center pl-1">
                         <AlertTriangle className="w-4 h-4 mr-2 text-yellow-500" />
                         Recent Alerts
                     </h2>
