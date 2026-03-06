@@ -4,9 +4,8 @@ import {
     Activity, Zap, Layers,
     ShieldCheck, ArrowDown, Waves, ArrowRight
 } from 'lucide-react';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+
+
 
 // --- Components ---
 
@@ -63,8 +62,6 @@ const FlowIndicator = () => (
 // --- Main Component ---
 
 const Architecture = () => {
-    const { isAuthenticated, role } = useAuth();
-    const navigate = useNavigate();
 
     // Session persistence enabled for background rendering
 

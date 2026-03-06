@@ -1,12 +1,9 @@
-import { useEffect } from 'react';
+
 import { motion } from 'framer-motion';
 import { Shield, Zap, Cpu, Activity, Layout, Network, HardDrive, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+
 
 const About = () => {
-    const { isAuthenticated, role } = useAuth();
-    const navigate = useNavigate();
 
     // Allowed for authenticated users to show the backgroundsite-wide
 

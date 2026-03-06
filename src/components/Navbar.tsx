@@ -34,8 +34,17 @@ const Navbar = () => {
     const currentLinks = !isAuthenticated ? publicLinks : (role === 'admin' ? adminLinks : userLinks);
 
     const handleLogout = () => {
+        // Clear all localStorage data (comprehensive cleanup)
+        localStorage.removeItem('fusionguard_token');
+        localStorage.removeItem('fusionguard_role');
+        localStorage.removeItem('fusionguard_users');
+        localStorage.removeItem('fusionguard_system_mode');
+        
+        // Call the context logout function (which also clears storage)
         logout();
-        navigate('/');
+        
+        // Force redirect to login page
+        navigate('/login', { replace: true });
         setIsOpen(false);
     };
 

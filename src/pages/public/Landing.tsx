@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Eye, Cpu, BellRing, Activity } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const FeatureCard = ({ icon: Icon, title, desc, delay }: any) => (
@@ -74,8 +74,7 @@ const PipelineNode = ({ label, delay, icon: Icon, isLast, index }: any) => (
 );
 
 const Landing = () => {
-    const { isAuthenticated, role } = useAuth();
-    const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
 
     // Logged-on users can browse this with the neural background from MainLayout
 

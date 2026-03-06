@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Unlock, Shield, User, Key, ChevronRight, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
+import { loginApi } from '../../services/authApi';
+
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -27,34 +29,19 @@ const Login = () => {
         setIsLoading(true);
         setError('');
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        const savedUsersStr = localStorage.getItem('fusionguard_users');
-        let users: any[] = [];
-        if (savedUsersStr) {
-            users = JSON.parse(savedUsersStr);
-        } else {
-            // mock default
-            users = [
-                { email: 'admin@fusionguard.ai', password: 'admin123', role: 'Admin', status: 'Active' },
-                { email: 'user@fusionguard.ai', password: 'user123', role: 'Operator', status: 'Active' }
-            ];
-        }
-
-        const user = users.find(u => u.email === username && u.password === password);
-
-        if (user) {
-            if (user.status !== 'Active') {
-                setError('Access Denied: Identity Inactive.');
-                setIsLoading(false);
-                return;
-            }
+        try {
+            const data = await loginApi({ email: username, password });
 
             setIsUnlocked(true);
-            const sysRole = user.role === 'Admin' ? 'admin' : 'user';
-            login(sysRole);
-            setLoginSuccessToast({ message: `${user.role} Access Granted`, type: sysRole });
+            const sysRole = data.role;
+
+            // Still call context login to update state
+            login(sysRole, data.token);
+
+            setLoginSuccessToast({
+                message: `${sysRole.charAt(0).toUpperCase() + sysRole.slice(1)} Access Granted`,
+                type: sysRole
+            });
 
             // Redirect based on role
             const target = from && from !== '/' && from !== '/dashboard' && from !== '/admin/dashboard'
@@ -62,8 +49,8 @@ const Login = () => {
                 : (sysRole === 'admin' ? '/admin/dashboard' : '/dashboard');
 
             setTimeout(() => navigate(target, { replace: true }), 1500);
-        } else {
-            setError('Access Denied: Invalid parameters.');
+        } catch (err: any) {
+            setError(err.message || 'Access Denied: Invalid parameters.');
             setIsLoading(false);
         }
     };
