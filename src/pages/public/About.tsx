@@ -223,7 +223,7 @@ const About = () => {
                     <div className="grid grid-cols-1 md:md:grid-cols-3 gap-8 max-w-[1440px] mx-auto">
                         {[
                             { name: "Pritesh Mahajan", role: "System Architecture & Software Development", initials: "PM" },
-                            { name: "Jalmesh Mhatre", role: "Hardware Integration & Control Systems", initials: "JM" },
+                            { name: "Jalmesh Mhatre", role: "Hardware Integration & Embedded Systems", initials: "JM" },
                             { name: "Siddhesh Murkute", role: "AI Logic & Testing", initials: "SM" }
                         ].map((member, i) => (
                             <motion.div
