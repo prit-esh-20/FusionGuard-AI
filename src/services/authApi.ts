@@ -74,15 +74,15 @@ export const loginApi = async (credentials: LoginCredentials): Promise<LoginResp
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        const savedUsersStr = localStorage.getItem('fusionguard_users');
+        const savedUsersStr = localStorage.getItem('robosec_users');
         let users: any[] = [];
 
         if (savedUsersStr) {
             users = JSON.parse(savedUsersStr);
         } else {
             users = [
-                { email: 'admin@fusionguard.ai', password: 'admin123', role: 'Admin', status: 'Active' },
-                { email: 'user@fusionguard.ai', password: 'user123', role: 'Operator', status: 'Active' }
+                { email: 'admin@robosec.ai', password: 'admin123', role: 'Admin', status: 'Active' },
+                { email: 'user@robosec.ai', password: 'user123', role: 'Operator', status: 'Active' }
             ];
         }
 
@@ -100,8 +100,8 @@ export const loginApi = async (credentials: LoginCredentials): Promise<LoginResp
         const token = generateMockToken(role);
 
         // Store tokens using the keys the user requested
-        localStorage.setItem('fusionguard_token', token);
-        localStorage.setItem('fusionguard_role', role);
+        localStorage.setItem('robosec_token', token);
+        localStorage.setItem('robosec_role', role);
 
         return {
             token,
@@ -171,14 +171,14 @@ export const verifyTokenApi = async (token: string): Promise<VerifyTokenResponse
  * Logout user and clear authentication data
  */
 export const logoutApi = (): void => {
-    localStorage.removeItem('fusionguard_token');
-    localStorage.removeItem('fusionguard_role');
-    localStorage.removeItem('fusionguard_users');
-    localStorage.removeItem('fusionguard_system_mode');
+    localStorage.removeItem('robosec_token');
+    localStorage.removeItem('robosec_role');
+    localStorage.removeItem('robosec_users');
+    localStorage.removeItem('robosec_system_mode');
 
-    // Clear any other fusionguard-prefixed keys
+    // Clear any other robosec-prefixed keys
     Object.keys(localStorage)
-        .filter(key => key.startsWith('fusionguard_'))
+        .filter(key => key.startsWith('robosec_'))
         .forEach(key => localStorage.removeItem(key));
 };
 
@@ -186,14 +186,14 @@ export const logoutApi = (): void => {
  * Get stored authentication token
  */
 export const getStoredToken = (): string | null => {
-    return localStorage.getItem('fusionguard_token');
+    return localStorage.getItem('robosec_token');
 };
 
 /**
  * Get stored role
  */
 export const getStoredRole = (): 'admin' | 'user' | null => {
-    const role = localStorage.getItem('fusionguard_role');
+    const role = localStorage.getItem('robosec_role');
     if (role === 'admin' || role === 'user') return role;
     return null;
 };

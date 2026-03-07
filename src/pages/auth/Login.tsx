@@ -167,7 +167,7 @@ const Login = () => {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Operator Email (admin@fusionguard.ai or user@fusionguard.ai)"
+                                placeholder="Operator Email (admin@robosec.ai or user@robosec.ai)"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 disabled={isLoading || isUnlocked}
@@ -220,7 +220,7 @@ const Login = () => {
                 <div className="mt-6 border-t border-dark-border overflow-hidden pt-4 text-center">
                     <span className="text-[10px] text-gray-600 font-mono tracking-widest uppercase flex items-center justify-center">
                         <Shield className="w-3 h-3 mr-1" />
-                        FusionGuard Encrypted Protocol
+                        RoboSec Encrypted Protocol
                     </span>
                 </div>
             </motion.div>

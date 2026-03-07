@@ -66,8 +66,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = (newRole: Role, token: string) => {
         setRole(newRole);
-        localStorage.setItem('fusionguard_role', newRole);
-        localStorage.setItem('fusionguard_token', token);
+        localStorage.setItem('robosec_role', newRole);
+        localStorage.setItem('robosec_token', token);
     };
 
     const logout = () => {

@@ -35,14 +35,14 @@ const Navbar = () => {
 
     const handleLogout = () => {
         // Clear all localStorage data (comprehensive cleanup)
-        localStorage.removeItem('fusionguard_token');
-        localStorage.removeItem('fusionguard_role');
-        localStorage.removeItem('fusionguard_users');
-        localStorage.removeItem('fusionguard_system_mode');
-        
+        localStorage.removeItem('robosec_token');
+        localStorage.removeItem('robosec_role');
+        localStorage.removeItem('robosec_users');
+        localStorage.removeItem('robosec_system_mode');
+
         // Call the context logout function (which also clears storage)
         logout();
-        
+
         // Force redirect to login page
         navigate('/login', { replace: true });
         setIsOpen(false);
@@ -60,7 +60,7 @@ const Navbar = () => {
                     >
                         <Shield className="w-8 h-8 text-neon-cyan animate-pulse-glow rounded-full" />
                         <span className="text-xl font-bold font-heading bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-[0.25em] group-hover:neon-text-cyan transition-all">
-                            FusionGuard AI
+                            RoboSec
                         </span>
                         {role === 'admin' && (
                             <motion.span

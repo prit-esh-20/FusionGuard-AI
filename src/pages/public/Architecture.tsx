@@ -91,7 +91,7 @@ const Architecture = () => {
                     </h1>
 
                     <p className="max-w-2xl mx-auto text-gray-400 text-lg leading-relaxed px-4">
-                        A project-focused overview of the FusionGuard AI patrolling robot,
+                        A project-focused overview of the RoboSec patrolling robot,
                         explaining the workflow from hardware sensors to the operator dashboard.
                     </p>
                 </motion.div>

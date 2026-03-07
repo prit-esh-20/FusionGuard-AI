@@ -11,11 +11,11 @@ const SystemContext = createContext<SystemContextType | undefined>(undefined);
 
 export const SystemProvider = ({ children }: { children: React.ReactNode }) => {
     const [systemMode, setSystemMode] = useState<SystemMode>(() => {
-        return (localStorage.getItem('fusionguard_system_mode') as SystemMode) || 'ACTIVE';
+        return (localStorage.getItem('robosec_system_mode') as SystemMode) || 'ACTIVE';
     });
 
     useEffect(() => {
-        localStorage.setItem('fusionguard_system_mode', systemMode);
+        localStorage.setItem('robosec_system_mode', systemMode);
     }, [systemMode]);
 
     return (
