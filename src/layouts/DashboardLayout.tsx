@@ -90,7 +90,7 @@ const DashboardLayout = ({ role }: { role: 'user' | 'admin' }) => {
             <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
                 {/* Top bar for mobile */}
                 <div className="md:hidden glass-panel border-b border-dark-border p-4 flex justify-between items-center z-30">
-                    <span className="font-bold text-neon-cyan">RoboSec Dashboard</span>
+                    <span className="font-bold text-neon-cyan">AstraVision Dashboard</span>
                     <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                         <Menu className="w-6 h-6 text-white" />
                     </button>

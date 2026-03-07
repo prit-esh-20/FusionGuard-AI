@@ -4,9 +4,9 @@ import { UserPlus, Trash2, X } from 'lucide-react';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([
-        { id: 'usr_01', email: 'admin@robosec.ai', role: 'admin', status: 'active' },
-        { id: 'usr_02', email: 'user@robosec.ai', role: 'user', status: 'active' },
-        { id: 'usr_03', email: 'guest@robosec.ai', role: 'user', status: 'inactive' },
+        { id: 'usr_01', email: 'admin@astravision.ai', role: 'admin', status: 'active' },
+        { id: 'usr_02', email: 'user@astravision.ai', role: 'user', status: 'active' },
+        { id: 'usr_03', email: 'guest@astravision.ai', role: 'user', status: 'inactive' },
     ]);
 
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
@@ -137,7 +137,7 @@ const UserManagement = () => {
                                         value={newEmail}
                                         onChange={(e) => setNewEmail(e.target.value)}
                                         className="w-full bg-black/50 border border-dark-border rounded px-4 py-3 text-white focus:outline-none focus:border-neon-cyan focus:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all font-mono placeholder:text-gray-600"
-                                        placeholder="user@robosec.ai"
+                                        placeholder="user@astravision.ai"
                                     />
                                 </div>
 

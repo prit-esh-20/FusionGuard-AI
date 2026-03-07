@@ -39,16 +39,16 @@ const AdminDashboard = () => {
     }
 
     const [users, setUsers] = useState<Identity[]>(() => {
-        const saved = localStorage.getItem('robosec_users');
+        const saved = localStorage.getItem('astravision_users');
         if (saved) return JSON.parse(saved);
         return [
-            { id: '1', name: 'admin_root', email: 'admin@robosec.ai', role: 'Admin', password: 'admin123', status: 'Active' },
-            { id: '2', name: 'viewer_01', email: 'user@robosec.ai', role: 'Operator', password: 'user123', status: 'Active' },
+            { id: '1', name: 'admin_root', email: 'admin@astravision.ai', role: 'Admin', password: 'admin123', status: 'Active' },
+            { id: '2', name: 'viewer_01', email: 'user@astravision.ai', role: 'Operator', password: 'user123', status: 'Active' },
         ];
     });
 
     React.useEffect(() => {
-        localStorage.setItem('robosec_users', JSON.stringify(users));
+        localStorage.setItem('astravision_users', JSON.stringify(users));
     }, [users]);
 
     const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -97,7 +97,7 @@ const AdminDashboard = () => {
     const handleDeleteUser = () => {
         if (!userToDelete) return;
         const user = users.find(u => u.id === userToDelete);
-        if (user?.email === 'admin@robosec.ai') {
+        if (user?.email === 'admin@astravision.ai') {
             setUserToDelete(null);
             return;
         }
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
     const toggleUserStatus = (id: string) => {
         setUsers(users.map(u => {
             if (u.id === id) {
-                if (u.email === 'admin@robosec.ai') return u;
+                if (u.email === 'admin@astravision.ai') return u;
                 if (u.role === 'Admin' && u.status === 'Active' && adminCount <= 1) return u;
                 return { ...u, status: u.status === 'Active' ? 'Inactive' : 'Active' };
             }
@@ -462,7 +462,7 @@ const AdminDashboard = () => {
                                         <button onClick={() => toggleUserStatus(u.id)} className={`text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded border transition-colors ${u.status === 'Active' ? 'text-green-500 bg-green-500/10 border-green-500/20 hover:bg-green-500/30' : 'text-gray-400 bg-gray-500/10 border-gray-500/20 hover:bg-gray-500/30'}`}>
                                             {u.status}
                                         </button>
-                                        {u.email !== 'admin@robosec.ai' && (
+                                        {u.email !== 'admin@astravision.ai' && (
                                             <button onClick={() => setUserToDelete(u.id)} className="text-gray-500 hover:text-neon-red transition-colors p-1" title="Revoke Access">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>

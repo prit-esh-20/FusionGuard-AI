@@ -45,7 +45,7 @@ const About = () => {
                             </h2>
                             <div className="text-gray-400 text-lg leading-[1.8] font-medium space-y-6 max-w-none">
                                 <p>
-                                    RoboSec is an autonomous security patrolling system designed to monitor restricted environments in real time. The robot navigates predefined routes while continuously scanning its surroundings using thermal sensing, ultrasonic range detection, and computer vision.
+                                    AstraVision is an autonomous security patrolling system designed to monitor restricted environments in real time. The robot navigates predefined routes while continuously scanning its surroundings using thermal sensing, ultrasonic range detection, and computer vision.
                                 </p>
                                 <p>
                                     When suspicious movement or human heat signatures are detected, the system validates the event using multi-sensor logic before triggering alerts. Notifications are transmitted instantly to a centralized dashboard, allowing remote monitoring and rapid response.

@@ -28,7 +28,7 @@ const MainLayout = () => {
 
             <footer className="border-t border-dark-border/50 bg-dark-surface/50 backdrop-blur-md z-10">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-                    <p>© {new Date().getFullYear()} RoboSec. Final Year Robotics Project.</p>
+                    <p>© {new Date().getFullYear()} AstraVision. Final Year Robotics Project.</p>
                     <div className="flex space-x-4 mt-4 md:mt-0">
                         {isAuthenticated && (
                             <motion.span

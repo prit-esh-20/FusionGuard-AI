@@ -140,7 +140,7 @@ const Landing = () => {
                     )}
 
                     <div className="space-y-4">
-                        <h2 className="text-2xl md:text-3xl font-semibold font-heading tracking-[0.25em] text-slate-300 opacity-80 uppercase">ROBOSEC</h2>
+                        <h2 className="text-2xl md:text-3xl font-semibold font-heading tracking-[0.25em] text-slate-300 opacity-80 uppercase">ASTRAVISION</h2>
                         <h1 className="text-6xl md:text-8xl font-bold font-heading tracking-[-0.01em] leading-none">
                             <span className="block bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-slate-500 pb-2">
                                 AUTONOMOUS

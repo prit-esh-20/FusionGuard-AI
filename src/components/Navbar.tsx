@@ -35,10 +35,10 @@ const Navbar = () => {
 
     const handleLogout = () => {
         // Clear all localStorage data (comprehensive cleanup)
-        localStorage.removeItem('robosec_token');
-        localStorage.removeItem('robosec_role');
-        localStorage.removeItem('robosec_users');
-        localStorage.removeItem('robosec_system_mode');
+        localStorage.removeItem('astravision_token');
+        localStorage.removeItem('astravision_role');
+        localStorage.removeItem('astravision_users');
+        localStorage.removeItem('astravision_system_mode');
 
         // Call the context logout function (which also clears storage)
         logout();
@@ -60,7 +60,7 @@ const Navbar = () => {
                     >
                         <Shield className="w-8 h-8 text-neon-cyan animate-pulse-glow rounded-full" />
                         <span className="text-xl font-bold font-heading bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue uppercase tracking-[0.25em] group-hover:neon-text-cyan transition-all">
-                            RoboSec
+                            AstraVision
                         </span>
                         {role === 'admin' && (
                             <motion.span

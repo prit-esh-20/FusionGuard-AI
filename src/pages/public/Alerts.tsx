@@ -61,7 +61,7 @@ const Alerts = () => {
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <p className="text-gray-400 text-lg max-w-2xl font-medium">
-                        Real-time log of security events and hardware status validation from the RoboSec perimeter.
+                        Real-time log of security events and hardware status validation from the AstraVision perimeter.
                     </p>
                     <div className="px-4 py-2 bg-dark-surface rounded-lg border border-dark-border flex items-center gap-3">
                         <Clock className="w-4 h-4 text-neon-cyan animate-pulse" />
