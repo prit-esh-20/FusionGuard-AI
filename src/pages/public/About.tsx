@@ -224,7 +224,7 @@ const About = () => {
                         {[
                             { name: "Pritesh Mahajan", role: "System Architecture & Software Development", initials: "PM" },
                             { name: "Jalmesh Mhatre", role: "Hardware Integration & Embedded Systems", initials: "JM" },
-                            { name: "Siddhesh Murkute", role: "AI Logic & Testing", initials: "SM" }
+                            { name: "Siddhesh Murkute", role: "AI Research, Model Integration & Technical Documentation", initials: "SM" }
                         ].map((member, i) => (
                             <motion.div
                                 key={i}
