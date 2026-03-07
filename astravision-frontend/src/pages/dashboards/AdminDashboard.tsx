@@ -17,6 +17,8 @@ const ControlPanel = ({ title, icon: Icon, children, className = '' }: any) => (
     </div>
 );
 
+
+
 const AdminDashboard = () => {
     const { systemMode } = useSystem();
     const [patrolActive, setPatrolActive] = useState(true);
@@ -427,7 +429,6 @@ const AdminDashboard = () => {
                         </div>
                     </div>
                 </ControlPanel>
-
             </div>
 
             {/* User Management */}
@@ -474,6 +475,8 @@ const AdminDashboard = () => {
                     </div>
                 </ControlPanel>
             </div>
+
+
         </div>
     );
 };
