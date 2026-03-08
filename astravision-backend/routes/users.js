@@ -25,15 +25,15 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
 
-  const { name, email, role, status } = req.body;
+  const { name, email, role, status, password } = req.body;
 
   try {
 
     const result = await pool.query(
-      `INSERT INTO users (name,email,role,status)
-       VALUES ($1,$2,$3,$4)
+      `INSERT INTO users (name,email,role,status,password)
+       VALUES ($1,$2,$3,$4,$5)
        RETURNING *`,
-      [name, email, role, status]
+      [name, email, role, status, password]
     );
 
     res.json(result.rows[0]);

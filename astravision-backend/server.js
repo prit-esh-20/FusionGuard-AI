@@ -11,6 +11,7 @@ const alertRoutes = require("./routes/alerts");
 const recordingRoutes = require("./routes/recordings");
 const logRoutes = require("./routes/logs");
 const usersRoute = require("./routes/users");
+const authRoute = require("./routes/auth");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/logs", logRoutes);
 app.use("/api/config", configRoutes);
 app.use("/api/metrics", metricsRoutes);
 app.use("/api/users", usersRoute);
+app.use("/api", authRoute);
 
 app.get("/", (req, res) => {
   res.send("AstraVision Backend Running");
