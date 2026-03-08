@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSystem } from '../../context/SystemContext';
 import {
@@ -27,8 +27,16 @@ const AdminDashboard = () => {
     const [servoAngle, setServoAngle] = useState(90);
     const [mlThreshold, setMlThreshold] = useState(85);
     const [ultraThreshold, setUltraThreshold] = useState(2.5);
+    interface RobotMetrics {
+        uptime: string;
+        cpu_load: number;
+        battery_voltage: number;
+        wifi_signal: number;
+    }
+
+    const [metrics, setMetrics] = useState<RobotMetrics | null>(null);
     const [thermSens, setThermSens] = useState(28.0);
-    const [uptime] = useState('24:15:33');
+    const uptime = metrics?.uptime || '--:--:--';
     const [confirmAction, setConfirmAction] = useState<null | 'stop-motors' | 'reboot-esp32'>(null);
 
     interface Identity {
@@ -52,6 +60,21 @@ const AdminDashboard = () => {
     React.useEffect(() => {
         localStorage.setItem('astravision_users', JSON.stringify(users));
     }, [users]);
+
+    useEffect(() => {
+        const fetchMetrics = async () => {
+            try {
+                const res = await fetch("http://localhost:3000/api/metrics");
+                const data = await res.json();
+                setMetrics(data);
+            } catch (error) {
+                console.error("Error fetching metrics:", error);
+            }
+        };
+        fetchMetrics();
+        const interval = setInterval(fetchMetrics, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [addUserState, setAddUserState] = useState<Partial<Identity>>({ name: '', email: '', role: 'Operator', password: '', status: 'Active' });
@@ -120,6 +143,20 @@ const AdminDashboard = () => {
             }
             return u;
         }));
+    };
+
+    const updateUltrasonicDistance = async (value: number) => {
+        try {
+            await fetch('http://localhost:3000/api/config/ultrasonic', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ distance: value }),
+            });
+        } catch (error) {
+            console.error('Error updating ultrasonic distance:', error);
+        }
     };
 
     return (
@@ -282,15 +319,15 @@ const AdminDashboard = () => {
                     <Clock className="text-gray-500 w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:text-gray-300 transition-all" />
                 </div>
                 <div className="glass-panel p-4 flex items-center justify-between border-l-2 border-dark-border hover:bg-white/5 hover:border-neon-blue transition-colors group">
-                    <div><p className="text-[10px] text-gray-500 uppercase tracking-widest">CPU Load</p><p className="font-mono text-gray-300 text-lg font-bold group-hover:text-white transition-colors">42%</p></div>
+                    <div><p className="text-[10px] text-gray-500 uppercase tracking-widest">CPU Load</p><p className="font-mono text-gray-300 text-lg font-bold group-hover:text-white transition-colors">{metrics?.cpu_load ?? 0}%</p></div>
                     <Cpu className="text-gray-500 w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:text-neon-blue transition-all" />
                 </div>
                 <div className="glass-panel p-4 flex items-center justify-between border-l-4 border-neon-green/80 hover:border-neon-green hover:shadow-[0_0_15px_rgba(50,255,50,0.1)] transition-all group duration-300 hover:-translate-y-0.5">
-                    <div><p className="text-xs text-neon-green/80 uppercase tracking-widest font-bold drop-shadow-[0_0_2px_rgba(50,255,50,0.5)]">Bat. Voltage</p><p className="font-mono text-white text-xl font-bold group-hover:text-neon-green transition-colors">11.4V</p></div>
+                    <div><p className="text-xs text-neon-green/80 uppercase tracking-widest font-bold drop-shadow-[0_0_2px_rgba(50,255,50,0.5)]">Bat. Voltage</p><p className="font-mono text-white text-xl font-bold group-hover:text-neon-green transition-colors">{metrics?.battery_voltage ?? 0}V</p></div>
                     <Battery className="text-neon-green/80 w-6 h-6 drop-shadow-[0_0_5px_rgba(50,255,50,0.5)] group-hover:text-neon-green transition-all" />
                 </div>
                 <div className="glass-panel p-4 flex items-center justify-between border-l-4 border-purple-500/80 hover:border-purple-500 hover:shadow-[0_0_15px_rgba(168,85,247,0.1)] transition-all group duration-300 hover:-translate-y-0.5">
-                    <div><p className="text-xs text-purple-500/80 uppercase tracking-widest font-bold drop-shadow-[0_0_2px_rgba(168,85,247,0.5)]">WiFi Signal</p><p className="font-mono text-white text-xl font-bold group-hover:text-purple-400 transition-colors">-68 dBm</p></div>
+                    <div><p className="text-xs text-purple-500/80 uppercase tracking-widest font-bold drop-shadow-[0_0_2px_rgba(168,85,247,0.5)]">WiFi Signal</p><p className="font-mono text-white text-xl font-bold group-hover:text-purple-400 transition-colors">{metrics?.wifi_signal ?? 0} dBm</p></div>
                     <Wifi className="text-purple-500/80 w-6 h-6 drop-shadow-[0_0_5px_rgba(168,85,247,0.5)] group-hover:text-purple-400 transition-all" />
                 </div>
             </div>
@@ -356,7 +393,11 @@ const AdminDashboard = () => {
                             <input
                                 title={`${ultraThreshold.toFixed(1)}m`}
                                 type="range" min="0.5" max="5.0" step="0.1" value={ultraThreshold}
-                                onChange={(e) => setUltraThreshold(parseFloat(e.target.value))}
+                                onChange={(e) => {
+                                    const val = parseFloat(e.target.value);
+                                    setUltraThreshold(val);
+                                    updateUltrasonicDistance(val);
+                                }}
                                 className="w-full accent-neon-blue cursor-grab active:cursor-grabbing"
                             />
                         </div>

@@ -1,6 +1,8 @@
 require("dotenv").config();
 require("./db");
 
+const metricsRoutes = require("./routes/metrics");
+const configRoutes = require("./routes/config");
 const express = require("express");
 const cors = require("cors");
 
@@ -18,6 +20,8 @@ app.use("/api/robot", robotRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api/recordings", recordingRoutes);
 app.use("/api/logs", logRoutes);
+app.use("/api/config", configRoutes);
+app.use("/api/metrics", metricsRoutes);
 
 app.get("/", (req, res) => {
   res.send("AstraVision Backend Running");
