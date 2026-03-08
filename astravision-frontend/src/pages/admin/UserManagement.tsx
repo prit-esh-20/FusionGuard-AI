@@ -189,7 +189,7 @@ const UserManagement = () => {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
-                                        className={`hover:bg-dark-surface/30 transition-colors ${user.status === 'Inactive' ? 'opacity-50' : ''}`}
+                                        className={`hover:bg-dark-surface/30 transition-colors ${user.status?.toLowerCase() === 'inactive' ? 'opacity-50' : ''}`}
                                     >
                                         <td className="px-6 py-4 font-bold text-white tracking-wide">{user.name}</td>
                                         <td className="px-6 py-4 font-mono text-gray-300">{user.email}</td>
@@ -199,17 +199,17 @@ const UserManagement = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`flex items-center text-xs uppercase tracking-widest font-bold ${user.status === 'Active' ? 'text-green-500' : 'text-gray-500'}`}>
-                                                <span className={`w-2 h-2 rounded-full mr-2 ${user.status === 'Active' ? 'bg-neon-green shadow-[0_0_8px_rgba(57,255,20,0.8)]' : 'bg-gray-500'}`}></span>
+                                            <span className={`flex items-center text-xs uppercase tracking-widest font-bold ${user.status?.toLowerCase() === 'active' ? 'text-green-500' : 'text-gray-500'}`}>
+                                                <span className={`w-2 h-2 rounded-full mr-2 ${user.status?.toLowerCase() === 'active' ? 'bg-neon-green shadow-[0_0_8px_rgba(57,255,20,0.8)]' : 'bg-gray-500'}`}></span>
                                                 {user.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right space-x-3">
                                             <button
                                                 onClick={() => toggleUserStatus(user.id)}
-                                                className={`text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded border transition-colors ${user.status === 'Active' ? 'text-green-500 bg-green-500/10 border-green-500/20 hover:bg-green-500/30' : 'text-gray-400 bg-gray-500/10 border-gray-500/20 hover:bg-gray-500/30'}`}
+                                                className={`text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded border transition-colors ${user.status?.toLowerCase() === 'active' ? 'text-green-500 bg-green-500/10 border-green-500/20 hover:bg-green-500/30' : 'text-gray-400 bg-gray-500/10 border-gray-500/20 hover:bg-gray-500/30'}`}
                                             >
-                                                {user.status === 'Active' ? 'Deactivate' : 'Activate'}
+                                                {user.status?.toLowerCase() === 'active' ? 'Deactivate' : 'Activate'}
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteUser(user.id)}
