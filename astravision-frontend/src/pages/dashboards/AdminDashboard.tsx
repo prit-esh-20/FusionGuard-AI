@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSystem } from '../../context/SystemContext';
 import {
-    Settings, Camera, Cpu, Zap, Sliders, Users, UserPlus, Trash2, Battery, Wifi, Clock, ShieldAlert, AlertTriangle
+    Settings, Camera, Cpu, Zap, Sliders, Users, Battery, Wifi, Clock, ShieldAlert, AlertTriangle
 } from 'lucide-react';
 
 const ControlPanel = ({ title, icon: Icon, children, className = '' }: any) => (
@@ -48,18 +48,21 @@ const AdminDashboard = () => {
         status: 'Active' | 'Inactive';
     }
 
-    const [users, setUsers] = useState<Identity[]>(() => {
-        const saved = localStorage.getItem('astravision_users');
-        if (saved) return JSON.parse(saved);
-        return [
-            { id: '1', name: 'admin_root', email: 'admin@astravision.ai', role: 'Admin', password: 'admin123', status: 'Active' },
-            { id: '2', name: 'viewer_01', email: 'user@astravision.ai', role: 'Operator', password: 'user123', status: 'Active' },
-        ];
-    });
+    const [users, setUsers] = useState<Identity[]>([]);
 
-    React.useEffect(() => {
-        localStorage.setItem('astravision_users', JSON.stringify(users));
-    }, [users]);
+    const loadUsers = async () => {
+        try {
+            const res = await fetch("http://localhost:3000/api/users");
+            const data = await res.json();
+            setUsers(data);
+        } catch (err) {
+            console.error("Failed to load users:", err);
+        }
+    };
+
+    useEffect(() => {
+        loadUsers();
+    }, []);
 
     useEffect(() => {
         const fetchMetrics = async () => {
@@ -76,74 +79,9 @@ const AdminDashboard = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const [showAddUserModal, setShowAddUserModal] = useState(false);
-    const [addUserState, setAddUserState] = useState<Partial<Identity>>({ name: '', email: '', role: 'Operator', password: '', status: 'Active' });
-    const [addUserError, setAddUserError] = useState('');
-    const [userSuccessToast, setUserSuccessToast] = useState('');
-    const [userToDelete, setUserToDelete] = useState<string | null>(null);
-
-    const activeUsersCount = users.filter(u => u.status === 'Active').length;
-    const adminCount = users.filter(u => u.role === 'Admin').length;
-
-    const handleCreateUser = () => {
-        if (!addUserState.name || !addUserState.email || !addUserState.password || !addUserState.role) {
-            setAddUserError('All fields are required.');
-            return;
-        }
-        if (!/^\S+@\S+\.\S+$/.test(addUserState.email)) {
-            setAddUserError('Invalid email format.');
-            return;
-        }
-        if (addUserState.password.length < 6) {
-            setAddUserError('Password must be at least 6 characters.');
-            return;
-        }
-        if (users.some(u => u.email === addUserState.email)) {
-            setAddUserError('Email already exists.');
-            return;
-        }
-
-        const newUser: Identity = {
-            id: Date.now().toString(),
-            name: addUserState.name,
-            email: addUserState.email,
-            role: addUserState.role as Identity['role'],
-            password: addUserState.password,
-            status: addUserState.status as Identity['status'] || 'Active'
-        };
-        setUsers([...users, newUser]);
-        setShowAddUserModal(false);
-        setAddUserState({ name: '', email: '', role: 'Operator', password: '', status: 'Active' });
-        setAddUserError('');
-        setUserSuccessToast('Identity Successfully Provisioned');
-        setTimeout(() => setUserSuccessToast(''), 3000);
-    };
-
-    const handleDeleteUser = () => {
-        if (!userToDelete) return;
-        const user = users.find(u => u.id === userToDelete);
-        if (user?.email === 'admin@astravision.ai') {
-            setUserToDelete(null);
-            return;
-        }
-        if (user?.role === 'Admin' && adminCount <= 1) {
-            setUserToDelete(null);
-            return; // Prevent demoting last admin
-        }
-        setUsers(users.filter(u => u.id !== userToDelete));
-        setUserToDelete(null);
-    };
-
-    const toggleUserStatus = (id: string) => {
-        setUsers(users.map(u => {
-            if (u.id === id) {
-                if (u.email === 'admin@astravision.ai') return u;
-                if (u.role === 'Admin' && u.status === 'Active' && adminCount <= 1) return u;
-                return { ...u, status: u.status === 'Active' ? 'Inactive' : 'Active' };
-            }
-            return u;
-        }));
-    };
+    const totalUsersCount = users.length;
+    const activeUsersCount = users.filter(u => u.status.toLowerCase() === 'active').length;
+    const adminCount = users.filter(u => u.role.toLowerCase() === 'admin').length;
 
     const updateUltrasonicDistance = async (value: number) => {
         try {
@@ -163,79 +101,7 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto space-y-4 pb-20 p-2 md:p-6 h-full overflow-y-auto custom-scrollbar relative">
 
             <AnimatePresence>
-                {userSuccessToast && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50, x: '-50%' }}
-                        animate={{ opacity: 1, y: 30, x: '-50%' }}
-                        exit={{ opacity: 0, y: -50, x: '-50%' }}
-                        className="fixed top-0 left-1/2 z-50 px-6 py-3 rounded-full flex items-center space-x-3 bg-neon-cyan/10 border border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.4)]"
-                    >
-                        <span className="font-bold tracking-widest uppercase text-sm">{userSuccessToast}</span>
-                    </motion.div>
-                )}
 
-                {showAddUserModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-dark-base border border-neon-cyan/50 shadow-[0_0_30px_rgba(0,240,255,0.15)] p-6 max-w-md w-full relative pointer-events-auto rounded-lg"
-                        >
-                            <h3 className="text-white font-bold uppercase tracking-widest text-lg mb-6 flex items-center"><UserPlus className="w-5 h-5 text-neon-cyan mr-2" /> Create System Identity</h3>
-
-                            <div className="space-y-4 mb-6">
-                                {addUserError && (
-                                    <div className="bg-red-500/10 border border-neon-red/50 text-neon-red px-3 py-2 text-xs font-mono rounded">
-                                        {addUserError}
-                                    </div>
-                                )}
-                                <input type="text" placeholder="Full Name" value={addUserState.name} onChange={e => setAddUserState({ ...addUserState, name: e.target.value })} className="w-full bg-dark-surface border border-dark-border px-3 py-2 text-white font-mono text-sm focus:border-neon-cyan outline-none rounded" />
-                                <input type="email" placeholder="Email Address" value={addUserState.email} onChange={e => setAddUserState({ ...addUserState, email: e.target.value })} className="w-full bg-dark-surface border border-dark-border px-3 py-2 text-white font-mono text-sm focus:border-neon-cyan outline-none rounded" />
-
-                                <select value={addUserState.role} onChange={e => setAddUserState({ ...addUserState, role: e.target.value as Identity['role'] })} className="w-full bg-dark-surface border border-dark-border px-3 py-2 text-white font-mono text-sm focus:border-neon-cyan outline-none rounded appearance-none">
-                                    <option value="Admin">Admin</option>
-                                    <option value="Operator">Operator</option>
-                                    <option value="Viewer">Viewer (Read-only)</option>
-                                </select>
-
-                                <input type="password" placeholder="Temporary Password" value={addUserState.password} onChange={e => setAddUserState({ ...addUserState, password: e.target.value })} className="w-full bg-dark-surface border border-dark-border px-3 py-2 text-white font-mono text-sm focus:border-neon-cyan outline-none rounded" />
-
-                                <div className="flex items-center justify-between bg-dark-surface border border-dark-border p-3 rounded">
-                                    <span className="text-gray-400 font-mono text-xs uppercase tracking-widest">Account Status</span>
-                                    <button onClick={() => setAddUserState({ ...addUserState, status: addUserState.status === 'Active' ? 'Inactive' : 'Active' })} className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded transition-colors ${addUserState.status === 'Active' ? 'bg-green-500/20 text-green-500 border border-green-500' : 'bg-gray-500/20 text-gray-500 border border-gray-500'}`}>
-                                        {addUserState.status}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end space-x-3">
-                                <button onClick={() => { setShowAddUserModal(false); setAddUserError(''); }} className="px-4 py-2 text-xs font-bold tracking-widest uppercase text-gray-400 hover:text-white transition-colors">Cancel</button>
-                                <button onClick={handleCreateUser} className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-neon-cyan/20 text-neon-cyan border border-neon-cyan hover:bg-neon-cyan hover:text-black transition-all shadow-[0_0_10px_rgba(0,240,255,0.2)]">Create Identity</button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-
-                {userToDelete && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-dark-base border border-neon-red/50 shadow-[0_0_30px_rgba(255,50,50,0.15)] p-6 max-w-sm w-full relative before:absolute before:inset-0 before:border before:border-neon-red/20 before:animate-pulse pointer-events-auto rounded-lg"
-                        >
-                            <h3 className="text-neon-red font-bold uppercase tracking-widest text-lg mb-2">Delete Identity</h3>
-                            <p className="text-gray-300 font-mono text-sm mb-6">This action will permanently revoke access for this user. Continue?</p>
-                            <div className="flex justify-end space-x-4 relative z-10">
-                                <button onClick={() => setUserToDelete(null)} className="px-4 py-2 text-xs font-bold tracking-widest uppercase text-gray-400 hover:text-white transition-colors">Cancel</button>
-                                <button onClick={handleDeleteUser} className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-neon-red/20 text-neon-red border border-neon-red hover:bg-neon-red hover:text-black transition-all shadow-[0_0_10px_rgba(255,50,50,0.2)]">Confirm</button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
 
                 {confirmAction && (
                     <motion.div
@@ -474,16 +340,12 @@ const AdminDashboard = () => {
 
             {/* User Management */}
             <div className="grid grid-cols-1 mt-5">
-                <ControlPanel title="Identity Access Management" icon={Users}>
+                <ControlPanel title="Identity Access Summary" icon={Users}>
                     <div className="flex items-center space-x-6 mb-4 text-[10px] uppercase font-mono tracking-widest text-gray-400 border-b border-dark-border/50 pb-3">
-                        <span>Active Users: <strong className="text-white">{activeUsersCount}</strong></span>
+                        <span>Total Users: <strong className="text-white">{totalUsersCount}</strong></span>
+                        <span>Active Users: <strong className="text-neon-cyan">{activeUsersCount}</strong></span>
                         <span>Administrators: <strong className="text-neon-cyan">{adminCount}</strong></span>
                     </div>
-
-                    <button onClick={() => setShowAddUserModal(true)} className="w-full flex justify-center items-center space-x-2 border border-dashed border-dark-border text-gray-400 py-3 rounded hover:border-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/5 transition-all mb-4 neon-border-cyan group">
-                        <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        <span className="uppercase font-bold text-xs">Provision New Identity</span>
-                    </button>
 
                     <div className="space-y-2">
                         <AnimatePresence>
@@ -491,7 +353,7 @@ const AdminDashboard = () => {
                                 <motion.div
                                     key={u.id}
                                     initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                                    className={`flex justify-between items-center p-2 border rounded hover:border-neon-cyan/50 hover:shadow-[0_0_10px_rgba(0,240,255,0.1)] transition-all ${u.status === 'Inactive' ? 'bg-dark-base border-dark-border opacity-50' : 'bg-dark-surface/50 border-dark-border'}`}
+                                    className={`flex justify-between items-center p-2 border rounded transition-all ${u.status === 'Inactive' ? 'bg-dark-base border-dark-border opacity-50' : 'bg-dark-surface/50 border-dark-border'}`}
                                 >
                                     <div className="flex flex-col">
                                         <div className="flex items-center space-x-2">
@@ -501,14 +363,9 @@ const AdminDashboard = () => {
                                         <p className="text-[10px] text-gray-400 uppercase tracking-wider">{u.email} • {u.role}</p>
                                     </div>
                                     <div className="flex items-center space-x-3">
-                                        <button onClick={() => toggleUserStatus(u.id)} className={`text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded border transition-colors ${u.status === 'Active' ? 'text-green-500 bg-green-500/10 border-green-500/20 hover:bg-green-500/30' : 'text-gray-400 bg-gray-500/10 border-gray-500/20 hover:bg-gray-500/30'}`}>
+                                        <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded border ${u.status?.toLowerCase() === 'active' ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 bg-gray-500/10 border-gray-500/20'}`}>
                                             {u.status}
-                                        </button>
-                                        {u.email !== 'admin@astravision.ai' && (
-                                            <button onClick={() => setUserToDelete(u.id)} className="text-gray-500 hover:text-neon-red transition-colors p-1" title="Revoke Access">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        )}
+                                        </span>
                                     </div>
                                 </motion.div>
                             ))}
