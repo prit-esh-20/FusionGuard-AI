@@ -1,56 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Unlock, Shield, User, Key, ChevronRight, Loader2 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-
-import { loginApi } from '../../services/authApi';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [loginSuccessToast, setLoginSuccessToast] = useState<{ message: string, type: 'admin' | 'user' } | null>(null);
 
-    const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname;
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!username || !password) {
-            setError('System credentials required.');
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                navigate("/admin/dashboard");
+            }
+        });
+
+        return () => unsubscribe();
+    }, [navigate]);
+
+    const handleLogin = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+
+        if (!email || !password) {
+            setError("System credentials required.");
             return;
         }
 
         setIsLoading(true);
-        setError('');
+        setError("");
 
         try {
-            const data = await loginApi({ email: username, password });
+            await signInWithEmailAndPassword(auth, email, password);
 
             setIsUnlocked(true);
-            const sysRole = data.role;
-
-            // Still call context login to update state
-            login(sysRole, data.token);
 
             setLoginSuccessToast({
-                message: `${sysRole.charAt(0).toUpperCase() + sysRole.slice(1)} Access Granted`,
-                type: sysRole
+                message: "Access Granted",
+                type: "admin"
             });
 
-            // Redirect based on role
-            const target = from && from !== '/' && from !== '/dashboard' && from !== '/admin/dashboard'
-                ? from
-                : (sysRole === 'admin' ? '/admin/dashboard' : '/dashboard');
+            setTimeout(() => {
+                navigate("/admin/dashboard");
+            }, 1000);
 
-            setTimeout(() => navigate(target, { replace: true }), 1500);
-        } catch (err: any) {
-            setError(err.message || 'Access Denied: Invalid parameters.');
+        } catch (error: any) {
+            console.error(error);
+            setError("Invalid credentials");
+        } finally {
             setIsLoading(false);
         }
     };
@@ -167,9 +172,9 @@ const Login = () => {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Operator Email (admin@astravision.ai or user@astravision.ai)"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Operator Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 disabled={isLoading || isUnlocked}
                                 className="w-full pl-10 pr-3 py-3 bg-dark-surface/50 border border-dark-border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan transition-all font-mono"
                             />
@@ -181,7 +186,7 @@ const Login = () => {
                             </div>
                             <input
                                 type="password"
-                                placeholder="Access Key (admin123 or user123)"
+                                placeholder="Access Key"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={isLoading || isUnlocked}

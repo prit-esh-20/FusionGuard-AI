@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { verifyTokenApi, getStoredToken, logoutApi } from '../services/authApi';
+import { auth } from '../firebase/firebaseConfig';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 type Role = 'guest' | 'user' | 'admin';
 
@@ -8,6 +10,7 @@ interface AuthContextType {
     role: Role;
     isAuthenticated: boolean;
     isLoading: boolean;
+    user: { email: string | null } | null;
     login: (role: Role, token: string) => void;
     logout: () => void;
 }
@@ -17,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [role, setRole] = useState<Role>('guest');
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [user, setUser] = useState<{ email: string | null } | null>(null);
 
     const isAuthenticated = role !== 'guest';
 
@@ -62,6 +66,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
 
         verifySession();
+
+        const unsubscribeFirebase = onAuthStateChanged(auth, (firebaseUser) => {
+            if (firebaseUser) {
+                setRole('admin'); // Mapping Firebase users to admin for system access
+                setUser({ email: firebaseUser.email });
+                // Ensure localStorage is synced for page reloads
+                localStorage.setItem('astravision_role', 'admin');
+            } else {
+                const legacyRole = localStorage.getItem('astravision_role') as Role;
+                if (!legacyRole || legacyRole === 'guest') {
+                    setRole('guest');
+                    setUser(null);
+                }
+            }
+        });
+
+        return () => unsubscribeFirebase();
     }, []);
 
     const login = (newRole: Role, token: string) => {
@@ -70,14 +91,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('astravision_token', token);
     };
 
-    const logout = () => {
-        logoutApi();
-        setRole('guest');
-        window.location.href = '/login';
+    const logout = async () => {
+        try {
+            await signOut(auth);
+            logoutApi();
+            setRole('guest');
+            setUser(null);
+            window.location.href = '/login';
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ role, isAuthenticated, isLoading, login, logout }}>
+        <AuthContext.Provider value={{ role, isAuthenticated, isLoading, user, login, logout }}>
             {isLoading ? (
                 <div className="min-h-screen flex items-center justify-center bg-dark-base text-neon-cyan">
                     <div className="flex flex-col items-center">
