@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Key, ChevronRight, Loader2, Lock, Unlock, Shield } from 'lucide-react';
+import { Lock, Unlock, Shield, User, Key, ChevronRight, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+
+import { loginApi } from '../../services/authApi';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -28,26 +30,13 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: username, password })
-            });
-
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || 'Invalid credentials');
-            }
-
-            const data = await response.json();
+            const data = await loginApi({ email: username, password });
 
             setIsUnlocked(true);
-            const sysRole = data.role?.toLowerCase() === 'admin' ? 'admin' : 'user';
+            const sysRole = data.role;
 
-            // Still call context login to update state (pass a mock token to satisfy context if needed)
-            login(sysRole, btoa(`auth-${sysRole}-${Date.now()}`));
+            // Still call context login to update state
+            login(sysRole, data.token);
 
             setLoginSuccessToast({
                 message: `${sysRole.charAt(0).toUpperCase() + sysRole.slice(1)} Access Granted`,
