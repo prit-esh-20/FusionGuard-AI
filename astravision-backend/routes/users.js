@@ -66,5 +66,28 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+/* GET user role by email */
+
+router.get("/role/:email", async (req, res) => {
+  try {
+
+    const { email } = req.params;
+
+    const result = await pool.query(
+      "SELECT role FROM users WHERE email=$1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch role" });
+  }
+});
 
 module.exports = router;

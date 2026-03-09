@@ -18,9 +18,22 @@ const Login = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                navigate("/admin/dashboard");
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user && user.email) {
+                try {
+                    const response = await fetch(
+                        `http://localhost:3000/api/users/role/${user.email}`
+                    );
+                    const data = await response.json();
+
+                    if (data.role === "admin") {
+                        navigate("/admin/dashboard");
+                    } else {
+                        navigate("/dashboard");
+                    }
+                } catch (error) {
+                    console.error("Session restoration failed:", error);
+                }
             }
         });
 
@@ -41,15 +54,25 @@ const Login = () => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
 
+            const response = await fetch(
+                `http://localhost:3000/api/users/role/${email}`
+            );
+
+            const data = await response.json();
+
             setIsUnlocked(true);
 
             setLoginSuccessToast({
                 message: "Access Granted",
-                type: "admin"
+                type: data.role === "admin" ? "admin" : "user"
             });
 
             setTimeout(() => {
-                navigate("/admin/dashboard");
+                if (data.role === "admin") {
+                    navigate("/admin/dashboard");
+                } else {
+                    navigate("/dashboard");
+                }
             }, 1000);
 
         } catch (error: any) {
