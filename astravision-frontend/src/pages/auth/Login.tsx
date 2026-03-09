@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Unlock, Shield, User, Key, ChevronRight, Loader2 } from 'lucide-react';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase/firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
+import { useAuth } from '../../context/AuthContext';
+import { loginApi } from '../../services/authApi';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -13,72 +12,44 @@ const Login = () => {
     const [error, setError] = useState('');
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [loginSuccessToast, setLoginSuccessToast] = useState<{ message: string, type: 'admin' | 'user' } | null>(null);
+    const { login } = useAuth();
 
     const navigate = useNavigate();
     const location = useLocation();
+    const from = location.state?.from?.pathname;
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user && user.email) {
-                try {
-                    const response = await fetch(
-                        `http://localhost:3000/api/users/role/${user.email}`
-                    );
-                    const data = await response.json();
-
-                    if (data.role === "admin") {
-                        navigate("/admin/dashboard");
-                    } else {
-                        navigate("/dashboard");
-                    }
-                } catch (error) {
-                    console.error("Session restoration failed:", error);
-                }
-            }
-        });
-
-        return () => unsubscribe();
-    }, [navigate]);
-
-    const handleLogin = async (e?: React.FormEvent) => {
-        if (e) e.preventDefault();
-
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (!email || !password) {
-            setError("System credentials required.");
+            setError('System credentials required.');
             return;
         }
 
         setIsLoading(true);
-        setError("");
+        setError('');
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-
-            const response = await fetch(
-                `http://localhost:3000/api/users/role/${email}`
-            );
-
-            const data = await response.json();
+            const data = await loginApi({ email, password });
 
             setIsUnlocked(true);
+            const sysRole = data.role;
+
+            // Still call context login to update state
+            login(sysRole, data.token);
 
             setLoginSuccessToast({
-                message: "Access Granted",
-                type: data.role === "admin" ? "admin" : "user"
+                message: `${sysRole.charAt(0).toUpperCase() + sysRole.slice(1)} Access Granted`,
+                type: sysRole
             });
 
-            setTimeout(() => {
-                if (data.role === "admin") {
-                    navigate("/admin/dashboard");
-                } else {
-                    navigate("/dashboard");
-                }
-            }, 1000);
+            // Redirect based on role
+            const target = from && from !== '/' && from !== '/dashboard' && from !== '/admin/dashboard'
+                ? from
+                : (sysRole === 'admin' ? '/admin/dashboard' : '/dashboard');
 
-        } catch (error: any) {
-            console.error(error);
-            setError("Invalid credentials");
-        } finally {
+            setTimeout(() => navigate(target, { replace: true }), 1500);
+        } catch (err: any) {
+            setError(err.message || 'Access Denied: Invalid parameters.');
             setIsLoading(false);
         }
     };
