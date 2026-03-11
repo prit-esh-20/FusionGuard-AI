@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders, Layers, Video } from 'lucide-react';
 import { useState } from 'react';
@@ -6,7 +6,6 @@ import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate();
     const { isAuthenticated, role, logout } = useAuth();
 
     const publicLinks = [
@@ -34,17 +33,8 @@ const Navbar = () => {
     const currentLinks = !isAuthenticated ? publicLinks : (role === 'admin' ? adminLinks : userLinks);
 
     const handleLogout = () => {
-        // Clear all localStorage data (comprehensive cleanup)
-        localStorage.removeItem('astravision_token');
-        localStorage.removeItem('astravision_role');
-        localStorage.removeItem('astravision_users');
-        localStorage.removeItem('astravision_system_mode');
-
-        // Call the context logout function (which also clears storage)
+        // Call the context logout function (which handles all cleanup and navigation)
         logout();
-
-        // Force redirect to login page
-        navigate('/login', { replace: true });
         setIsOpen(false);
     };
 

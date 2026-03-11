@@ -1,4 +1,4 @@
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Home, Sliders, Activity, ShieldAlert, Menu } from 'lucide-react';
@@ -20,13 +20,11 @@ const SidebarLink = ({ to, icon: Icon, label, isActive }: { to: string; icon: an
 
 const DashboardLayout = ({ role }: { role: 'user' | 'admin' }) => {
     const { logout } = useAuth();
-    const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
     };
 
     const navItems = [

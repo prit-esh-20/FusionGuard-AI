@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Landing from './pages/public/Landing';
 import Architecture from './pages/public/Architecture';
@@ -23,8 +23,7 @@ function App() {
   return (
     <AuthProvider>
       <SystemProvider>
-        <BrowserRouter>
-          <Routes>
+        <Routes>
             <Route path="/" element={<MainLayout />}>
               {/* Public Routes - No Neural Background */}
               <Route index element={<Landing />} />
@@ -55,7 +54,6 @@ function App() {
             <Route path="/user/dashboard" element={<Navigate to="/dashboard" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </BrowserRouter>
       </SystemProvider>
     </AuthProvider>
   );
