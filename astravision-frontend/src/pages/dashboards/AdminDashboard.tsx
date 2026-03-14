@@ -35,6 +35,7 @@ const AdminDashboard = () => {
     }
 
     const [metrics, setMetrics] = useState<RobotMetrics | null>(null);
+    const [alerts, setAlerts] = useState<any[]>([]);
     const [thermSens, setThermSens] = useState(28.0);
     const uptime = metrics?.uptime || '--:--:--';
     const [confirmAction, setConfirmAction] = useState<null | 'stop-motors' | 'reboot-esp32'>(null);
@@ -65,23 +66,30 @@ const AdminDashboard = () => {
     }, []);
 
     useEffect(() => {
-        const fetchMetrics = async () => {
+        const fetchSystemData = async () => {
             try {
-                const res = await fetch("http://localhost:3000/api/metrics");
-                const data = await res.json();
-                setMetrics(data);
+                // Fetch Metrics
+                const metricsRes = await fetch("http://localhost:3000/api/metrics");
+                const metricsData = await metricsRes.json();
+                setMetrics(metricsData);
+
+                // Fetch Alerts
+                const alertsRes = await fetch("http://localhost:3000/api/alerts");
+                const alertsData = await alertsRes.json();
+                setAlerts(alertsData);
             } catch (error) {
-                console.error("Error fetching metrics:", error);
+                console.error("Error fetching system data:", error);
             }
         };
-        fetchMetrics();
-        const interval = setInterval(fetchMetrics, 5000);
+        fetchSystemData();
+        const interval = setInterval(fetchSystemData, 5000);
         return () => clearInterval(interval);
     }, []);
 
     const totalUsersCount = users.length;
     const activeUsersCount = users.filter(u => u.status.toLowerCase() === 'active').length;
     const adminCount = users.filter(u => u.role.toLowerCase() === 'admin').length;
+    const criticalAlarmsCount = alerts.filter(a => a.severity === 'CRITICAL').length;
 
     const updateUltrasonicDistance = async (value: number) => {
         try {
@@ -324,11 +332,11 @@ const AdminDashboard = () => {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center bg-dark-surface/50 p-3 rounded border border-dark-border hover:border-neon-cyan/50 hover:shadow-[0_0_10px_rgba(0,240,255,0.1)] transition-colors">
                             <span className="text-sm text-gray-300 font-mono">Today's Alerts</span>
-                            <span className="text-neon-cyan font-bold font-mono">12</span>
+                            <span className="text-neon-cyan font-bold font-mono">{alerts.length}</span>
                         </div>
                         <div className="flex justify-between items-center bg-red-500/10 p-3 rounded border border-red-500/30 hover:border-red-500/80 hover:shadow-[0_0_10px_rgba(255,50,50,0.1)] transition-colors">
                             <span className="text-sm text-red-400 font-mono">Critical Incidents</span>
-                            <span className="text-neon-red font-bold font-mono">3</span>
+                            <span className="text-neon-red font-bold font-mono">{criticalAlarmsCount}</span>
                         </div>
                         <div className="flex justify-between items-center bg-dark-surface/50 p-3 rounded border border-dark-border hover:border-neon-cyan/50 hover:shadow-[0_0_10px_rgba(0,240,255,0.1)] transition-colors">
                             <span className="text-sm text-gray-300 font-mono">False Positives</span>

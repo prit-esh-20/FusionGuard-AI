@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Download, Video, X, Calendar, Clock, HardDrive, Filter, FileVideo } from 'lucide-react';
+import { Play, Download, Video, X, Calendar, Clock, HardDrive, Filter, FileVideo, Search } from 'lucide-react';
 
 const RecordingCard = ({ recording: rec, onSelect, onDownload }: any) => (
     <motion.div
@@ -79,8 +79,9 @@ const Recordings = () => {
     const [recordings, setRecordings] = useState<any[]>([]);
     const [category, setCategory] = useState("all");
     const [sort, setSort] = useState('Latest First');
+    const [search, setSearch] = useState("");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
+    const [selectedRecording, setSelectedRecording] = useState<any | null>(null);
 
     const fetchRecordings = async () => {
         try {
@@ -103,6 +104,10 @@ const Recordings = () => {
     useEffect(() => {
         fetchRecordings();
     }, [category, sort]);
+
+    const filteredRecordings = recordings.filter((rec) =>
+        rec.title?.toLowerCase().includes(search.toLowerCase())
+    );
 
     const handleDownload = (e: React.MouseEvent, title: string) => {
         e.stopPropagation();
@@ -149,15 +154,27 @@ const Recordings = () => {
                 </div>
             </div>
 
+            {/* Search Bar */}
+            <div className="mb-8 relative max-w-2xl">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neon-cyan/50" />
+                <input
+                    type="text"
+                    placeholder="Search recordings by title..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full bg-[#0b1220]/80 border border-neon-cyan/20 rounded-xl py-4 pl-12 pr-4 text-white placeholder:text-gray-500 font-mono text-sm focus:outline-none focus:border-neon-cyan/50 focus:shadow-[0_0_15px_rgba(0,240,255,0.1)] transition-all backdrop-blur-md"
+                />
+            </div>
+
             {/* Grid */}
-            {recordings.length > 0 ? (
+            {filteredRecordings.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 min-h-[400px]">
                     <AnimatePresence mode="popLayout">
-                        {recordings.map((rec) => (
+                        {filteredRecordings.map((rec) => (
                             <RecordingCard 
                                 key={rec.id} 
                                 recording={rec} 
-                                onSelect={setSelectedVideo} 
+                                onSelect={setSelectedRecording} 
                                 onDownload={handleDownload} 
                             />
                         ))}
@@ -179,7 +196,7 @@ const Recordings = () => {
 
             {/* Video Modal */}
             <AnimatePresence>
-                {selectedVideo && (
+                {selectedRecording && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-xl">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -189,75 +206,43 @@ const Recordings = () => {
                         >
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-neon-cyan to-transparent shadow-[0_0_10px_rgba(0,240,255,0.5)]" />
 
-                            <div className="p-4 sm:p-6 border-b border-white/5 flex justify-between items-start bg-[#060a12]/80 backdrop-blur-md shrink-0 relative z-20">
-                                <div>
-                                    <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-tight pr-8 text-neon-cyan drop-shadow-md flex items-center">
-                                        <Video className="w-5 h-5 mr-3 hidden sm:block opacity-70" />
-                                        {selectedVideo.title}
-                                    </h2>
-                                    <div className="flex flex-wrap items-center gap-3 mt-3">
-                                        <span className="text-xs font-mono text-gray-400 bg-black/60 px-2.5 py-1 rounded border border-white/5 shadow-inner">
-                                            {selectedVideo.recorded_at ? new Date(selectedVideo.recorded_at).toLocaleString() : "Unknown Date"}
-                                        </span>
-                                        <span className="text-[10px] font-bold tracking-widest uppercase text-neon-cyan bg-neon-cyan/5 px-2.5 py-1 rounded border border-neon-cyan/20">
-                                            {selectedVideo.category} Record
-                                        </span>
-                                    </div>
-                                </div>
+                            <div className="p-4 sm:p-6 border-b border-white/5 flex justify-end items-start bg-[#060a12]/80 backdrop-blur-md shrink-0 relative z-20">
                                 <button
-                                    onClick={() => setSelectedVideo(null)}
+                                    onClick={() => setSelectedRecording(null)}
                                     className="p-2 sm:p-2.5 rounded-full bg-dark-surface border border-dark-border text-gray-400 hover:text-white hover:border-neon-red/50 hover:bg-neon-red/10 hover:shadow-[0_0_15px_rgba(255,50,50,0.2)] transition-all group shrink-0"
                                 >
                                     <X className="w-5 h-5 group-hover:scale-110 transition-transform group-hover:text-neon-red" />
                                 </button>
                             </div>
 
-                            <div className="aspect-video bg-black relative flex items-center justify-center overflow-hidden shrink-0">
-                                {selectedVideo.video_url ? (
-                                    <video src={selectedVideo.video_url} controls className="w-full h-full object-contain" autoPlay />
+                            <div className="p-4 sm:p-6 bg-black flex flex-col items-center overflow-y-auto">
+                                {selectedRecording.video_url ? (
+                                    <video src={selectedRecording.video_url} controls autoPlay className="w-full rounded-lg" />
                                 ) : (
-                                    <>
-                                        {/* Simulated Player */}
-                                        <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/tv-noise.png')]" />
-
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{ delay: 0.5, duration: 1 }}
-                                            className="absolute animate-pulse text-neon-cyan/20 flex flex-col items-center"
-                                        >
-                                            <Play className="w-20 h-20 mb-6 drop-shadow-[0_0_20px_rgba(0,240,255,0.5)]" />
-                                            <span className="font-mono text-sm uppercase tracking-[0.2em] font-bold bg-black/40 px-4 py-2 rounded-lg border border-neon-cyan/20">Playing Secure Stream...</span>
-                                        </motion.div>
-
-                                        {/* Overlay scanline */}
-                                        <motion.div
-                                            className="absolute top-0 left-0 right-0 h-1 bg-neon-cyan/20 blur-[2px] z-10"
-                                            animate={{ top: ["0%", "100%", "0%"] }}
-                                            transition={{ duration: 6, ease: "linear", repeat: Infinity }}
-                                        />
-
-                                        <div className="absolute bottom-4 left-4 z-20 flex space-x-3">
-                                            <span className="text-[10px] font-mono text-white/70 font-bold bg-black/80 px-3 py-1.5 rounded tracking-widest border border-white/10 flex items-center shadow-lg">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-neon-red mr-2 animate-pulse" />
-                                                PLAYBACK SEC-01
-                                            </span>
-                                            <span className="text-[10px] font-mono text-neon-cyan font-bold bg-black/80 px-3 py-1.5 rounded tracking-widest border border-neon-cyan/20 shadow-lg">
-                                                {selectedVideo.duration || "00:00"}
-                                            </span>
-                                        </div>
-                                    </>
+                                    <div className="aspect-video w-full rounded-lg bg-[#05080f] flex flex-col items-center justify-center border border-dark-border border-dashed">
+                                        <FileVideo className="w-16 h-16 text-gray-700 mb-4" />
+                                        <p className="font-mono text-gray-500 text-sm uppercase tracking-widest">Video Source Unavailable</p>
+                                    </div>
                                 )}
-                            </div>
-
-                            <div className="p-4 bg-[#060a12]/80 border-t border-white/5 flex justify-end shrink-0">
-                                <button
-                                    onClick={(e) => handleDownload(e, selectedVideo.title)}
-                                    className="py-2.5 px-6 bg-transparent border border-neon-green text-neon-green rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-neon-green/10 hover:shadow-[0_0_15px_rgba(0,255,100,0.2)] transition-all flex items-center justify-center space-x-2"
-                                >
-                                    <Download className="w-4 h-4" />
-                                    <span>Download File</span>
-                                </button>
+                                
+                                <div className="mt-6 w-full text-left space-y-2">
+                                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-widest text-neon-cyan">
+                                        {selectedRecording.title}
+                                    </h2>
+                                    <div className="flex flex-wrap items-center gap-4 text-gray-400 font-mono text-sm mt-3 bg-neon-cyan/5 p-4 rounded-lg border border-neon-cyan/10">
+                                        <span className="bg-neon-cyan/10 text-neon-cyan px-3 py-1 rounded border border-neon-cyan/20 font-bold uppercase tracking-widest text-xs">
+                                            {selectedRecording.category}
+                                        </span>
+                                        <span className="flex items-center gap-2">
+                                            <HardDrive className="w-4 h-4 text-neon-cyan" />
+                                            {selectedRecording.file_size || "Unknown Size"}
+                                        </span>
+                                        <span className="flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-neon-cyan" />
+                                            {selectedRecording.recorded_at ? new Date(selectedRecording.recorded_at).toLocaleString() : "Unknown Date"}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     </div>

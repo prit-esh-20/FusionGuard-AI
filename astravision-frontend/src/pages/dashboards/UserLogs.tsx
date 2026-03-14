@@ -1,38 +1,36 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Filter, Calendar, AlertTriangle, Info, CheckCircle, ShieldAlert } from 'lucide-react';
 
-// Mock Logs Data
-const MOCK_LOGS = [
-    { id: 1, time: '10:46 PM', date: '2023-06-16', type: 'Critical', desc: 'Human heat signature confirmed near Main Gate', status: 'Logged', timestamp: 1686950760000 },
-    { id: 2, time: '10:56 PM', date: '2023-06-16', type: 'Info', desc: 'Routine patrol sweep completed', status: 'Verified', timestamp: 1686951360000 },
-    { id: 3, time: '11:02 PM', date: '2023-06-16', type: 'Warning', desc: 'Low light detected in Sector 2', status: 'Resolved', timestamp: 1686951720000 },
-    { id: 4, time: '11:15 PM', date: '2023-06-16', type: 'Info', desc: 'Connectivity status check passed', status: 'Verified', timestamp: 1686952500000 },
-    { id: 5, time: '12:05 AM', date: '2023-06-17', type: 'Critical', desc: 'Unauthorized access attempt on network 02', status: 'Resolved', timestamp: 1686955500000 },
-    { id: 6, time: '01:30 AM', date: '2023-06-17', type: 'Warning', desc: 'Motion sensor battery low in Sector Alpha', status: 'Logged', timestamp: 1686960600000 },
-    { id: 7, time: '02:00 AM', date: '2023-06-17', type: 'Info', desc: 'System backup completed successfully', status: 'Verified', timestamp: 1686962400000 },
-    { id: 8, time: '03:45 AM', date: '2023-06-17', type: 'Info', desc: 'Scheduled maintenance check', status: 'Verified', timestamp: 1686968700000 },
-];
-
 const UserLogs = () => {
+    const [logs, setLogs] = useState<any[]>([]);
     const [filter, setFilter] = useState('All');
     const [dateRange, setDateRange] = useState('Last 24 Hours');
 
-    const filteredLogs = useMemo(() => {
-        let result = MOCK_LOGS;
-        if (filter !== 'All') {
-            result = result.filter(log => log.type === filter);
+    const fetchLogs = async () => {
+        try {
+            const res = await fetch("http://localhost:3000/api/logs");
+            const data = await res.json();
+            setLogs(data);
+        } catch (err) {
+            console.error("Failed to fetch logs", err);
         }
+    };
 
-        // Mock Date filtering
-        if (dateRange === 'Last 7 Days') {
-            // No-op for mock, but would filter by date
+    useEffect(() => {
+        fetchLogs();
+    }, []);
+
+    const filteredLogs = useMemo(() => {
+        let result = [...logs];
+        if (filter !== 'All') {
+            result = result.filter(log => (log.event || 'Info').toLowerCase() === filter.toLowerCase());
         }
 
         // Sort latest first
-        result.sort((a, b) => b.timestamp - a.timestamp);
+        result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         return result;
-    }, [filter, dateRange]);
+    }, [logs, filter, dateRange]);
 
     const getTypeStyles = (type: string) => {
         switch (type) {
@@ -101,42 +99,49 @@ const UserLogs = () => {
                 <div className="overflow-y-auto custom-scrollbar flex-grow p-4 sm:p-6 lg:p-8 space-y-4">
                     <AnimatePresence>
                         {filteredLogs.length > 0 ? (
-                            filteredLogs.map((log, idx) => (
-                                <motion.div
-                                    key={log.id}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: 20 }}
-                                    transition={{ delay: idx * 0.05, duration: 0.3 }}
-                                    className="group relative bg-black/40 hover:bg-[#0b1220] border border-white/5 hover:border-neon-cyan/30 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 transition-all shadow-md hover:shadow-[0_0_20px_rgba(0,240,255,0.1)] z-10"
-                                >
-                                    {/* Left Side: Timestamp & Badge */}
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 shrink-0 w-full sm:w-auto">
-                                        <div className="flex flex-col w-32 shrink-0">
-                                            <span className="text-sm font-bold text-gray-200 uppercase tracking-wider">{log.time}</span>
-                                            <span className="text-[10px] text-gray-500 font-mono tracking-widest">{log.date}</span>
-                                        </div>
-                                        <div className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-widest flex items-center justify-center sm:w-28 shrink-0 ${getTypeStyles(log.type)}`}>
-                                            {getTypeIcon(log.type)}
-                                            {log.type}
-                                        </div>
-                                    </div>
+                            filteredLogs.map((log, idx) => {
+                                const type = log.event || 'Info';
+                                const dateObj = new Date(log.created_at);
+                                const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                const dateStr = dateObj.toLocaleDateString();
 
-                                    {/* Center: Description */}
-                                    <div className="flex-grow pl-0 md:pl-4 border-l-0 md:border-l border-white/10 w-full">
-                                        <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors leading-relaxed">
-                                            {log.desc}
-                                        </p>
-                                    </div>
+                                return (
+                                    <motion.div
+                                        key={log.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 20 }}
+                                        transition={{ delay: idx * 0.05, duration: 0.3 }}
+                                        className="group relative bg-black/40 hover:bg-[#0b1220] border border-white/5 hover:border-neon-cyan/30 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6 transition-all shadow-md hover:shadow-[0_0_20px_rgba(0,240,255,0.1)] z-10"
+                                    >
+                                        {/* Left Side: Timestamp & Badge */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 shrink-0 w-full sm:w-auto">
+                                            <div className="flex flex-col w-32 shrink-0">
+                                                <span className="text-sm font-bold text-gray-200 uppercase tracking-wider">{timeStr}</span>
+                                                <span className="text-[10px] text-gray-500 font-mono tracking-widest">{dateStr}</span>
+                                            </div>
+                                            <div className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-widest flex items-center justify-center sm:w-28 shrink-0 ${getTypeStyles(type)}`}>
+                                                {getTypeIcon(type)}
+                                                {type}
+                                            </div>
+                                        </div>
 
-                                    {/* Right Side: Status Outline */}
-                                    <div className="shrink-0 pt-2 md:pt-0 self-end md:self-center w-full md:w-auto text-right md:text-left">
-                                        <span className="inline-block px-3 py-1 border border-dark-border text-gray-400 group-hover:border-neon-cyan/40 group-hover:text-neon-cyan rounded text-[10px] font-bold uppercase tracking-widest bg-dark-base shadow-sm transition-all whitespace-nowrap">
-                                            {log.status}
-                                        </span>
-                                    </div>
-                                </motion.div>
-                            ))
+                                        {/* Center: Description */}
+                                        <div className="flex-grow pl-0 md:pl-4 border-l-0 md:border-l border-white/10 w-full">
+                                            <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors leading-relaxed">
+                                                {log.description}
+                                            </p>
+                                        </div>
+
+                                        {/* Right Side: Status Outline */}
+                                        <div className="shrink-0 pt-2 md:pt-0 self-end md:self-center w-full md:w-auto text-right md:text-left">
+                                            <span className="inline-block px-3 py-1 border border-dark-border text-gray-400 group-hover:border-neon-cyan/40 group-hover:text-neon-cyan rounded text-[10px] font-bold uppercase tracking-widest bg-dark-base shadow-sm transition-all whitespace-nowrap">
+                                                Recorded
+                                            </span>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })
                         ) : (
                             <motion.div
                                 initial={{ opacity: 0 }}
