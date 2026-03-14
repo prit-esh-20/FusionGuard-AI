@@ -33,7 +33,7 @@ const StatCounter = ({ title, value, icon: Icon, unit, neonColorClass }: any) =>
 
 const MachineLearning = () => {
     return (
-        <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
+        <div className="pt-8 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
             {/* Header */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

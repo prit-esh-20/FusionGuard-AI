@@ -66,7 +66,7 @@ const Architecture = () => {
     // Session persistence enabled for background rendering
 
     return (
-        <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
+        <div className="min-h-screen pt-8 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
 
             {/* Background Soft Glows */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none opacity-10 overflow-hidden">

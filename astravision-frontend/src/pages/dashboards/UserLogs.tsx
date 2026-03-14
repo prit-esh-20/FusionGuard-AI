@@ -53,7 +53,7 @@ const UserLogs = () => {
     };
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto flex flex-col">
+        <div className="min-h-screen pt-8 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto flex flex-col">
             <div className="mb-10 text-center flex flex-col items-center">
                 <h1 className="text-2xl md:text-3xl font-black text-white uppercase tracking-widest drop-shadow-[0_0_15px_rgba(0,240,255,0.3)] flex items-center justify-center w-full">
                     <Activity className="w-6 h-6 md:w-8 md:h-8 mr-4 text-neon-cyan inline-block shrink-0" />

@@ -53,7 +53,7 @@ const Alerts = () => {
     ];
 
     return (
-        <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-12">
+        <div className="min-h-screen pt-8 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto flex flex-col">
             <header className="space-y-4">
                 <div className="flex items-center gap-3 text-neon-cyan">
                     <ShieldAlert className="w-8 h-8 opacity-80" />

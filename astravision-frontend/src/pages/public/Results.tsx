@@ -32,7 +32,7 @@ const StatHighlight = ({ icon: Icon, value, label, colorClass }: any) => (
 
 const Results = () => {
     return (
-        <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
+        <div className="pt-8 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
             {/* Header */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

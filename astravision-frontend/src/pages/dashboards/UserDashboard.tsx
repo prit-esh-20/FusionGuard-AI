@@ -50,7 +50,7 @@ const UserDashboard = () => {
     };
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto flex flex-col">
+        <div className="min-h-screen pt-8 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto flex flex-col">
             <div className="mb-6 lg:mb-10 text-center lg:text-left">
                 <h1 className="text-2xl md:text-3xl font-bold font-heading text-white uppercase tracking-[0.1em] drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]">Operator Dashboard</h1>
                 <p className="text-sm text-neon-cyan/70 font-mono mt-2 tracking-wide uppercase">Secure Facilities Monitoring Console</p>
