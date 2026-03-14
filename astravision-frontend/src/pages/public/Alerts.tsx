@@ -24,7 +24,7 @@ const AlertItem = ({ time, msg, type, status }: any) => {
         if (severity === 'WARNING') return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
         return 'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20';
     };
-
+    
     const renderIcon = (severity: string) => {
         if (severity === 'CRITICAL') return <ShieldAlert size={18} />;
         if (severity === 'WARNING') return <AlertTriangle size={18} />;

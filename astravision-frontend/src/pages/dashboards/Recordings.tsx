@@ -1,36 +1,108 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Download, Video, X, Calendar, Clock, HardDrive, Filter, FileVideo } from 'lucide-react';
 
-// Mock Data
-const MOCK_RECORDINGS = [
-    { id: 1, title: 'Motion Detection – Sector 3', type: 'Motion', date: '15 June 2023 – 14:30', duration: '00:45', size: '24.5 MB', timestamp: 1686839400000 },
-    { id: 2, title: 'Intrusion Alert – Main Entrance', type: 'Intrusion', date: '14 June 2023 – 02:15', duration: '03:20', size: '112.0 MB', timestamp: 1686708900000 },
-    { id: 3, title: 'Night Patrol – Perimeter', type: 'Patrol', date: '13 June 2023 – 23:00', duration: '45:00', size: '1.2 GB', timestamp: 1686697200000 },
-    { id: 4, title: 'Tamper Detection – Parking Lot', type: 'Tamper', date: '12 June 2023 – 09:45', duration: '01:15', size: '45.8 MB', timestamp: 1686563100000 },
-    { id: 5, title: 'Motion Detection – Server Room', type: 'Motion', date: '10 June 2023 – 11:30', duration: '00:30', size: '18.2 MB', timestamp: 1686396600000 },
-];
+const RecordingCard = ({ recording: rec, onSelect, onDownload }: any) => (
+    <motion.div
+        layout
+        initial={{ opacity: 0, scale: 0.9, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 15 }}
+        transition={{ duration: 0.3 }}
+        className="bg-[#0b1220]/80 backdrop-blur-sm border border-dark-border rounded-xl overflow-hidden hover:border-neon-cyan/40 hover:shadow-[0_0_25px_rgba(0,240,255,0.1)] transition-all duration-300 group flex flex-col h-full shadow-lg"
+    >
+        {/* Thumbnail */}
+        <div className="relative aspect-video bg-[#05080f] overflow-hidden flex items-center justify-center cursor-pointer" onClick={() => onSelect(rec)}>
+            {rec.thumbnail_url ? (
+                <img src={rec.thumbnail_url} className="absolute inset-0 w-full h-full object-cover opacity-60 recording-thumb" alt="Thumbnail" />
+            ) : (
+                <FileVideo className="w-12 h-12 text-neon-cyan/5 group-hover:scale-125 transition-transform duration-700 absolute" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1220] via-transparent to-transparent z-10 opacity-90" />
+
+            {/* Play Button Overlay */}
+            <div className="z-20 w-12 h-12 rounded-full bg-neon-cyan/10 backdrop-blur-md border border-neon-cyan/50 flex items-center justify-center text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.2)] group-hover:bg-neon-cyan group-hover:text-black group-hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] group-hover:scale-110 group-hover:border-neon-cyan transition-all duration-300">
+                <Play className="w-5 h-5 ml-1" fill="currentColor" />
+            </div>
+
+            <div className="absolute bottom-2 right-2 z-20 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono font-bold tracking-widest text-white border border-white/10 shadow-md">
+                {rec.duration || "00:00"}
+            </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-5 flex flex-col flex-grow relative z-20 bg-gradient-to-b from-[#0b1220]/0 to-[#0b1220]/80">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2 leading-normal group-hover:text-neon-cyan transition-colors line-clamp-2">
+                {rec.title}
+            </h3>
+            <span className="text-[10px] font-bold tracking-widest uppercase text-neon-cyan bg-neon-cyan/5 px-2 py-1 inline-block w-max rounded border border-neon-cyan/20 mb-4">
+                {rec.category}
+            </span>
+
+            <div className="space-y-2 mb-6 flex-grow bg-black/20 p-3 rounded-lg border border-white/5">
+                <div className="flex items-center text-xs font-mono text-gray-400">
+                    <Calendar className="w-3.5 h-3.5 mr-2 text-neon-cyan" />
+                    {rec.recorded_at ? new Date(rec.recorded_at).toLocaleString() : "Unknown Date"}
+                </div>
+                <div className="flex items-center text-xs font-mono text-gray-400">
+                    <Clock className="w-3.5 h-3.5 mr-2 text-neon-cyan" />
+                    {rec.duration || "Unknown Time"}
+                </div>
+                <div className="flex items-center text-xs font-mono text-gray-400">
+                    <HardDrive className="w-3.5 h-3.5 mr-2 text-neon-cyan" />
+                    {rec.file_size || "Unknown Size"}
+                </div>
+            </div>
+
+            {/* Actions */}
+            <div className="grid grid-cols-2 gap-3 mt-auto">
+                <button
+                    onClick={() => onSelect(rec)}
+                    className="w-full py-2.5 bg-neon-cyan/10 border border-neon-cyan text-neon-cyan rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-neon-cyan hover:text-black hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center space-x-2"
+                >
+                    <Play className="w-3.5 h-3.5" fill="currentColor" />
+                    <span>Play</span>
+                </button>
+                <button
+                    onClick={(e) => onDownload(e, rec.title || rec.type)}
+                    className="w-full py-2.5 bg-transparent border border-neon-green/50 text-neon-green rounded-lg text-[10px] font-black uppercase tracking-widest hover:border-neon-green hover:bg-neon-green/10 hover:shadow-[0_0_15px_rgba(0,255,100,0.2)] transition-all flex items-center justify-center space-x-2 group/btn"
+                >
+                    <Download className="w-3.5 h-3.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                    <span>Save</span>
+                </button>
+            </div>
+        </div>
+    </motion.div>
+);
 
 const Recordings = () => {
-    const [filter, setFilter] = useState('All');
+    const [recordings, setRecordings] = useState<any[]>([]);
+    const [category, setCategory] = useState("all");
     const [sort, setSort] = useState('Latest First');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
 
-    const filteredAndSorted = useMemo(() => {
-        let result = MOCK_RECORDINGS;
-
-        if (filter !== 'All') {
-            result = result.filter(r => r.type === filter);
+    const fetchRecordings = async () => {
+        try {
+            const res = await fetch(`http://localhost:3000/api/recordings?category=${category}`);
+            const data = await res.json();
+            
+            // Sort frontend data since API sorting might not be implemented
+            data.sort((a: any, b: any) => {
+                const timeA = new Date(a.created_at || 0).getTime();
+                const timeB = new Date(b.created_at || 0).getTime();
+                return sort === 'Latest First' ? timeB - timeA : timeA - timeB;
+            });
+            
+            setRecordings(data);
+        } catch (error) {
+            console.error("Failed to fetch recordings", error);
         }
+    };
 
-        result.sort((a, b) => {
-            if (sort === 'Latest First') return b.timestamp - a.timestamp;
-            return a.timestamp - b.timestamp;
-        });
-
-        return result;
-    }, [filter, sort]);
+    useEffect(() => {
+        fetchRecordings();
+    }, [category, sort]);
 
     const handleDownload = (e: React.MouseEvent, title: string) => {
         e.stopPropagation();
@@ -53,11 +125,11 @@ const Recordings = () => {
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-[#0b1220]/80 border border-neon-cyan/20 p-4 rounded-xl backdrop-blur-md gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative z-10">
                 <div className="flex items-center space-x-2 sm:space-x-4 w-full md:w-auto overflow-x-auto custom-scrollbar pb-2 md:pb-0 scroll-smooth snap-x">
                     <Filter className="w-4 h-4 text-gray-400 hidden sm:block shrink-0" />
-                    {['All', 'Motion', 'Intrusion', 'Patrol', 'Tamper'].map(f => (
+                    {['all', 'motion', 'intrusion', 'patrol', 'tamper'].map(f => (
                         <button
                             key={f}
-                            onClick={() => setFilter(f)}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap snap-center shrink-0 ${filter === f ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/50 shadow-[0_0_15px_rgba(0,240,255,0.2)]' : 'bg-transparent text-gray-400 border border-transparent hover:text-white hover:border-dark-border hover:bg-white/5'}`}
+                            onClick={() => setCategory(f)}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap snap-center shrink-0 ${category === f ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/50 shadow-[0_0_15px_rgba(0,240,255,0.2)]' : 'bg-transparent text-gray-400 border border-transparent hover:text-white hover:border-dark-border hover:bg-white/5'}`}
                         >
                             {f}
                         </button>
@@ -78,74 +150,16 @@ const Recordings = () => {
             </div>
 
             {/* Grid */}
-            {filteredAndSorted.length > 0 ? (
+            {recordings.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 min-h-[400px]">
                     <AnimatePresence mode="popLayout">
-                        {filteredAndSorted.map((rec) => (
-                            <motion.div
-                                layout
-                                initial={{ opacity: 0, scale: 0.9, y: 15 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9, y: 15 }}
-                                transition={{ duration: 0.3 }}
-                                key={rec.id}
-                                className="bg-[#0b1220]/80 backdrop-blur-sm border border-dark-border rounded-xl overflow-hidden hover:border-neon-cyan/40 hover:shadow-[0_0_25px_rgba(0,240,255,0.1)] transition-all duration-300 group flex flex-col h-full shadow-lg"
-                            >
-                                {/* Thumbnail */}
-                                <div className="relative aspect-video bg-[#05080f] overflow-hidden flex items-center justify-center cursor-pointer" onClick={() => setSelectedVideo(rec)}>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b1220] via-transparent to-transparent z-10 opacity-90" />
-                                    <FileVideo className="w-12 h-12 text-neon-cyan/5 group-hover:scale-125 transition-transform duration-700 absolute" />
-
-                                    {/* Play Button Overlay */}
-                                    <div className="z-20 w-12 h-12 rounded-full bg-neon-cyan/10 backdrop-blur-md border border-neon-cyan/50 flex items-center justify-center text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.2)] group-hover:bg-neon-cyan group-hover:text-black group-hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] group-hover:scale-110 group-hover:border-neon-cyan transition-all duration-300">
-                                        <Play className="w-5 h-5 ml-1" fill="currentColor" />
-                                    </div>
-
-                                    <div className="absolute bottom-2 right-2 z-20 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono font-bold tracking-widest text-white border border-white/10 shadow-md">
-                                        {rec.duration}
-                                    </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className="p-5 flex flex-col flex-grow relative z-20 bg-gradient-to-b from-[#0b1220]/0 to-[#0b1220]/80">
-                                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 leading-normal group-hover:text-neon-cyan transition-colors h-10 line-clamp-2">
-                                        {rec.title}
-                                    </h3>
-
-                                    <div className="space-y-2 mb-6 flex-grow bg-black/20 p-3 rounded-lg border border-white/5">
-                                        <div className="flex items-center text-xs font-mono text-gray-400">
-                                            <Calendar className="w-3.5 h-3.5 mr-2 text-neon-cyan" />
-                                            {rec.date}
-                                        </div>
-                                        <div className="flex items-center text-xs font-mono text-gray-400">
-                                            <Clock className="w-3.5 h-3.5 mr-2 text-neon-cyan" />
-                                            {rec.duration}
-                                        </div>
-                                        <div className="flex items-center text-xs font-mono text-gray-400">
-                                            <HardDrive className="w-3.5 h-3.5 mr-2 text-neon-cyan" />
-                                            {rec.size}
-                                        </div>
-                                    </div>
-
-                                    {/* Actions */}
-                                    <div className="grid grid-cols-2 gap-3 mt-auto">
-                                        <button
-                                            onClick={() => setSelectedVideo(rec)}
-                                            className="w-full py-2.5 bg-neon-cyan/10 border border-neon-cyan text-neon-cyan rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-neon-cyan hover:text-black hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center space-x-2"
-                                        >
-                                            <Play className="w-3.5 h-3.5" fill="currentColor" />
-                                            <span>Play</span>
-                                        </button>
-                                        <button
-                                            onClick={(e) => handleDownload(e, rec.title)}
-                                            className="w-full py-2.5 bg-transparent border border-neon-green/50 text-neon-green rounded-lg text-[10px] font-black uppercase tracking-widest hover:border-neon-green hover:bg-neon-green/10 hover:shadow-[0_0_15px_rgba(0,255,100,0.2)] transition-all flex items-center justify-center space-x-2 group/btn"
-                                        >
-                                            <Download className="w-3.5 h-3.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                                            <span>Save</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </motion.div>
+                        {recordings.map((rec) => (
+                            <RecordingCard 
+                                key={rec.id} 
+                                recording={rec} 
+                                onSelect={setSelectedVideo} 
+                                onDownload={handleDownload} 
+                            />
                         ))}
                     </AnimatePresence>
                 </div>
@@ -183,10 +197,10 @@ const Recordings = () => {
                                     </h2>
                                     <div className="flex flex-wrap items-center gap-3 mt-3">
                                         <span className="text-xs font-mono text-gray-400 bg-black/60 px-2.5 py-1 rounded border border-white/5 shadow-inner">
-                                            {selectedVideo.date}
+                                            {selectedVideo.recorded_at ? new Date(selectedVideo.recorded_at).toLocaleString() : "Unknown Date"}
                                         </span>
                                         <span className="text-[10px] font-bold tracking-widest uppercase text-neon-cyan bg-neon-cyan/5 px-2.5 py-1 rounded border border-neon-cyan/20">
-                                            {selectedVideo.type} Alert
+                                            {selectedVideo.category} Record
                                         </span>
                                     </div>
                                 </div>
@@ -199,35 +213,41 @@ const Recordings = () => {
                             </div>
 
                             <div className="aspect-video bg-black relative flex items-center justify-center overflow-hidden shrink-0">
-                                {/* Simulated Player */}
-                                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/tv-noise.png')]" />
+                                {selectedVideo.video_url ? (
+                                    <video src={selectedVideo.video_url} controls className="w-full h-full object-contain" autoPlay />
+                                ) : (
+                                    <>
+                                        {/* Simulated Player */}
+                                        <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/tv-noise.png')]" />
 
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ delay: 0.5, duration: 1 }}
-                                    className="absolute animate-pulse text-neon-cyan/20 flex flex-col items-center"
-                                >
-                                    <Play className="w-20 h-20 mb-6 drop-shadow-[0_0_20px_rgba(0,240,255,0.5)]" />
-                                    <span className="font-mono text-sm uppercase tracking-[0.2em] font-bold bg-black/40 px-4 py-2 rounded-lg border border-neon-cyan/20">Playing Secure Stream...</span>
-                                </motion.div>
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.5, duration: 1 }}
+                                            className="absolute animate-pulse text-neon-cyan/20 flex flex-col items-center"
+                                        >
+                                            <Play className="w-20 h-20 mb-6 drop-shadow-[0_0_20px_rgba(0,240,255,0.5)]" />
+                                            <span className="font-mono text-sm uppercase tracking-[0.2em] font-bold bg-black/40 px-4 py-2 rounded-lg border border-neon-cyan/20">Playing Secure Stream...</span>
+                                        </motion.div>
 
-                                {/* Overlay scanline */}
-                                <motion.div
-                                    className="absolute top-0 left-0 right-0 h-1 bg-neon-cyan/20 blur-[2px] z-10"
-                                    animate={{ top: ["0%", "100%", "0%"] }}
-                                    transition={{ duration: 6, ease: "linear", repeat: Infinity }}
-                                />
+                                        {/* Overlay scanline */}
+                                        <motion.div
+                                            className="absolute top-0 left-0 right-0 h-1 bg-neon-cyan/20 blur-[2px] z-10"
+                                            animate={{ top: ["0%", "100%", "0%"] }}
+                                            transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+                                        />
 
-                                <div className="absolute bottom-4 left-4 z-20 flex space-x-3">
-                                    <span className="text-[10px] font-mono text-white/70 font-bold bg-black/80 px-3 py-1.5 rounded tracking-widest border border-white/10 flex items-center shadow-lg">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-neon-red mr-2 animate-pulse" />
-                                        PLAYBACK SEC-01
-                                    </span>
-                                    <span className="text-[10px] font-mono text-neon-cyan font-bold bg-black/80 px-3 py-1.5 rounded tracking-widest border border-neon-cyan/20 shadow-lg">
-                                        {selectedVideo.duration}
-                                    </span>
-                                </div>
+                                        <div className="absolute bottom-4 left-4 z-20 flex space-x-3">
+                                            <span className="text-[10px] font-mono text-white/70 font-bold bg-black/80 px-3 py-1.5 rounded tracking-widest border border-white/10 flex items-center shadow-lg">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-neon-red mr-2 animate-pulse" />
+                                                PLAYBACK SEC-01
+                                            </span>
+                                            <span className="text-[10px] font-mono text-neon-cyan font-bold bg-black/80 px-3 py-1.5 rounded tracking-widest border border-neon-cyan/20 shadow-lg">
+                                                {selectedVideo.duration || "00:00"}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
 
                             <div className="p-4 bg-[#060a12]/80 border-t border-white/5 flex justify-end shrink-0">
