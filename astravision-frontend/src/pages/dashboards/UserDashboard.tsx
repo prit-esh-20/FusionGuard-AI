@@ -6,30 +6,68 @@ import { useNavigate } from 'react-router-dom';
 const UserDashboard = () => {
     const navigate = useNavigate();
 
-    // Simulated simple state
-    const [battery] = useState(78);
-    const [status] = useState('Patrolling'); // Patrolling, Idle, Charging, Alert Mode
-    const [network] = useState('Online');
-    const [lastActivity] = useState('Last sweep: 2 mins ago');
+    // State variables
+    const [alerts, setAlerts] = useState<any[]>([]);
+    const [logs, setLogs] = useState<any[]>([]);
+    const [robotStatus, setRobotStatus] = useState<any>(null);
+
+    // Derived values for UI from robotStatus if available
+    const battery = robotStatus?.battery || 0;
+    const mode = robotStatus?.mode || "UNKNOWN"; 
+    const network = robotStatus?.network || "OFFLINE";
+    const lastActivity = robotStatus?.last_activity || "No activity";
+
     const [fps, setFps] = useState(30);
     const [latency, setLatency] = useState(42);
 
+    const fetchDashboardData = async () => {
+        try {
+            // Fetch Alerts
+            const alertsRes = await fetch('http://localhost:3000/api/alerts');
+            const alertsData = await alertsRes.json();
+            // Map backend data to UI expectations if necessary, or just store directly
+            // For now, storing directly as requested
+            setAlerts(alertsData);
+
+            // Fetch Logs
+            const logsRes = await fetch('http://localhost:3000/api/logs');
+            const logsData = await logsRes.json();
+            setLogs(logsData);
+
+            // Fetch Robot Status
+            const statusRes = await fetch('http://localhost:3000/api/robot/status');
+            const statusData = await statusRes.json();
+            setRobotStatus(statusData);
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+        }
+    };
+
     useEffect(() => {
-        const interval = setInterval(() => {
+        // Initial fetch
+        fetchDashboardData();
+
+        // Refresh every 5 seconds
+        const dataInterval = setInterval(fetchDashboardData, 5000);
+
+        // Simulation interval for FPS and Latency (remaining from existing UI)
+        const simInterval = setInterval(() => {
             setFps(Math.round(28 + Math.random() * 4));
             setLatency(Math.round(40 + Math.random() * 8));
         }, 1500);
-        return () => clearInterval(interval);
+
+        return () => {
+            clearInterval(dataInterval);
+            clearInterval(simInterval);
+        };
     }, []);
 
-    // Simulated alerts
-    const alerts = [
-        { id: 1, time: '10:42 AM', desc: 'Motion detected in Sector Alpha', severity: 'warning', status: 'Logged' },
-        { id: 2, time: '10:15 AM', desc: 'Routine scan completed', severity: 'info', status: 'Verified' },
-        { id: 3, time: '09:30 AM', desc: 'Unauthorized entry attempt', severity: 'critical', status: 'Logged' },
-        { id: 4, time: '08:45 AM', desc: 'System boot sequence clear', severity: 'info', status: 'Verified' },
-        { id: 5, time: '08:00 AM', desc: 'Scheduled maintenance check', severity: 'info', status: 'Verified' },
-    ];
+    // Temporary console logs to verify data is received
+    useEffect(() => {
+        console.log("Current Alerts:", alerts);
+        console.log("Current Logs:", logs);
+        console.log("Current Robot Status:", robotStatus);
+    }, [alerts, logs, robotStatus]);
 
     const getSeverityStyles = (severity: string) => {
         switch (severity) {
@@ -122,13 +160,13 @@ const UserDashboard = () => {
                             {/* Current Mode */}
                             <div>
                                 <span className="block text-xs font-mono text-neon-cyan/70 uppercase mb-3 tracking-wider">Current Mode</span>
-                                <div className={`inline-flex w-full items-center justify-center px-4 py-4 rounded-xl border-2 font-black text-lg tracking-[0.2em] uppercase transition-colors ${status === 'Patrolling' ? 'bg-neon-cyan/10 border-neon-cyan text-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.2)]' :
-                                    status === 'Alert Mode' ? 'bg-neon-red/10 border-neon-red text-neon-red shadow-[0_0_20px_rgba(255,50,50,0.2)] animate-pulse' :
+                                <div className={`inline-flex w-full items-center justify-center px-4 py-4 rounded-xl border-2 font-black text-lg tracking-[0.2em] uppercase transition-colors ${mode === 'Patrolling' ? 'bg-neon-cyan/10 border-neon-cyan text-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.2)]' :
+                                    mode === 'Alert Mode' || mode === 'CRITICAL' ? 'bg-neon-red/10 border-neon-red text-neon-red shadow-[0_0_20px_rgba(255,50,50,0.2)] animate-pulse' :
                                         'bg-dark-base border-dark-border text-gray-300'
                                     }`}>
-                                    {status === 'Patrolling' && <span className="w-3 h-3 rounded-full bg-neon-cyan mr-3 animate-ping" />}
-                                    {status === 'Alert Mode' && <span className="w-3 h-3 rounded-full bg-neon-red mr-3 animate-ping" />}
-                                    {status}
+                                    {mode === 'Patrolling' && <span className="w-3 h-3 rounded-full bg-neon-cyan mr-3 animate-ping" />}
+                                    {(mode === 'Alert Mode' || mode === 'CRITICAL') && <span className="w-3 h-3 rounded-full bg-neon-red mr-3 animate-ping" />}
+                                    {mode}
                                 </div>
                             </div>
 
@@ -182,28 +220,35 @@ const UserDashboard = () => {
                     <div className="bg-[#0b1220]/80 backdrop-blur-xl p-5 border border-neon-cyan/20 rounded-2xl shadow-[0_0_20px_rgba(0,240,255,0.05)] flex flex-col h-full lg:max-h-[calc(100vh-16rem)]">
                         <div className="space-y-4 overflow-y-auto custom-scrollbar pr-2 flex-grow mb-4">
                             <AnimatePresence>
-                                {alerts.map((alert, idx) => (
-                                    <motion.div
-                                        key={alert.id}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.1 }}
-                                        className={`p-4 rounded-xl border ${getSeverityStyles(alert.severity)} bg-opacity-10 backdrop-blur-sm relative overflow-hidden`}
-                                    >
-                                        <div className="flex justify-between items-start mb-2 relative z-10">
-                                            <span className="text-[10px] font-mono opacity-80 flex items-center gap-1.5 font-bold">
-                                                {getSeverityIcon(alert.severity)}
-                                                {alert.time}
-                                            </span>
-                                            <span className="text-[9px] font-bold uppercase tracking-widest bg-black/60 px-2.5 py-1 rounded border border-current opacity-90">
-                                                {alert.status}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm font-medium leading-snug relative z-10 mt-1">
-                                            {alert.desc}
-                                        </p>
-                                    </motion.div>
-                                ))}
+                                {alerts.length > 0 ? (
+                                    alerts.slice(0, 3).map((alert, idx) => (
+                                        <motion.div
+                                            key={alert.id || idx}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: idx * 0.1 }}
+                                            className={`p-4 rounded-xl border ${getSeverityStyles(alert.severity || 'info')} bg-opacity-10 backdrop-blur-sm relative overflow-hidden`}
+                                        >
+                                            <div className="flex justify-between items-start mb-2 relative z-10">
+                                                <span className="text-[10px] font-mono opacity-80 flex items-center gap-1.5 font-bold">
+                                                    {getSeverityIcon(alert.severity || 'info')}
+                                                    {alert.created_at ? new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                                </span>
+                                                <span className="text-[9px] font-bold uppercase tracking-widest bg-black/60 px-2.5 py-1 rounded border border-current opacity-90">
+                                                    {alert.status || 'Active'}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm font-medium leading-snug relative z-10 mt-1">
+                                                {alert.message}
+                                            </p>
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-40 text-gray-500 opacity-60">
+                                        <AlertTriangle className="w-8 h-8 mb-2 opacity-20" />
+                                        <p className="text-xs font-mono uppercase tracking-widest">No alerts detected</p>
+                                    </div>
+                                )}
                             </AnimatePresence>
                         </div>
 
