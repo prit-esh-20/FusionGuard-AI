@@ -37,20 +37,26 @@ const AlertItem = ({ time, msg, type, status }: any) => (
 
 const Alerts = () => {
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+    const [alerts, setAlerts] = useState<any[]>([]);
+
+    const fetchAlerts = async () => {
+        try {
+            const res = await fetch("http://localhost:3000/api/alerts");
+            const data = await res.json();
+            setAlerts(data);
+        } catch (err) {
+            console.error("Failed to fetch alerts", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchAlerts();
+    }, []);
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
         return () => clearInterval(timer);
     }, []);
-
-    const alertHistory = [
-        { time: "23:45:12", msg: "Human heat signature detected in Zone-A perimeter. Thermal delta: +14.2°C.", type: "critical", status: "Logged" },
-        { time: "23:42:05", msg: "Ultrasonic sensor US-03 recalibrated. Variance within normal operational parameters.", type: "info", status: "Verified" },
-        { time: "23:30:18", msg: "Visual classification node synchronized with Cloud Server. Latency: 42ms.", type: "info", status: "Verified" },
-        { time: "22:15:55", msg: "Unidentified movement logged at 4.5m Range Logic limit. Secondary scan active.", type: "critical", status: "Logged" },
-        { time: "21:05:42", msg: "System-wide diagnostic completed. All sensor hardware verticals 100% operational.", type: "info", status: "Verified" },
-        { time: "18:45:00", msg: "Manual operational override initiated for battery cycle maintenance sweep.", type: "info", status: "Verified" },
-    ];
 
     return (
         <div className="min-h-screen pt-8 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto flex flex-col">
@@ -74,8 +80,14 @@ const Alerts = () => {
                 {/* Vertical Timeline Guide */}
                 <div className="absolute left-6 top-8 bottom-8 w-px bg-dark-border/30 z-0 hidden md:block" />
 
-                {alertHistory.map((alert, i) => (
-                    <AlertItem key={i} {...alert} />
+                {alerts.map((alert, i) => (
+                    <AlertItem 
+                        key={alert.id || i} 
+                        time={alert.created_at ? new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'N/A'}
+                        msg={alert.message}
+                        type={alert.severity || alert.type || 'info'}
+                        status={alert.status || 'LOGGED'}
+                    />
                 ))}
             </div>
 

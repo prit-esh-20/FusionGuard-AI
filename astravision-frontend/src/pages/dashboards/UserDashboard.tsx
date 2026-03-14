@@ -47,8 +47,8 @@ const UserDashboard = () => {
         // Initial fetch
         fetchDashboardData();
 
-        // Refresh every 5 seconds
-        const dataInterval = setInterval(fetchDashboardData, 5000);
+        // Refresh every 2 seconds
+        const dataInterval = setInterval(fetchDashboardData, 2000);
 
         // Simulation interval for FPS and Latency (remaining from existing UI)
         const simInterval = setInterval(() => {
@@ -69,14 +69,7 @@ const UserDashboard = () => {
         console.log("Current Robot Status:", robotStatus);
     }, [alerts, logs, robotStatus]);
 
-    const getSeverityStyles = (severity: string) => {
-        switch (severity) {
-            case 'critical': return 'border-neon-red/40 bg-neon-red/10 text-neon-red';
-            case 'warning': return 'border-yellow-500/40 bg-yellow-500/10 text-yellow-500';
-            case 'info': return 'border-neon-cyan/40 bg-neon-cyan/10 text-neon-cyan';
-            default: return 'border-dark-border text-gray-400';
-        }
-    };
+
 
     const getSeverityIcon = (severity: string) => {
         switch (severity) {
@@ -221,28 +214,46 @@ const UserDashboard = () => {
                         <div className="space-y-4 overflow-y-auto custom-scrollbar pr-2 flex-grow mb-4">
                             <AnimatePresence>
                                 {alerts.length > 0 ? (
-                                    alerts.slice(0, 3).map((alert, idx) => (
-                                        <motion.div
-                                            key={alert.id || idx}
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: idx * 0.1 }}
-                                            className={`p-4 rounded-xl border ${getSeverityStyles(alert.severity || 'info')} bg-opacity-10 backdrop-blur-sm relative overflow-hidden`}
-                                        >
-                                            <div className="flex justify-between items-start mb-2 relative z-10">
-                                                <span className="text-[10px] font-mono opacity-80 flex items-center gap-1.5 font-bold">
-                                                    {getSeverityIcon(alert.severity || 'info')}
-                                                    {alert.created_at ? new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
-                                                </span>
-                                                <span className="text-[9px] font-bold uppercase tracking-widest bg-black/60 px-2.5 py-1 rounded border border-current opacity-90">
-                                                    {alert.status || 'Active'}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm font-medium leading-snug relative z-10 mt-1">
-                                                {alert.message}
-                                            </p>
-                                        </motion.div>
-                                    ))
+                                    alerts.slice(0, 3).map((alert, idx) => {
+                                        const status = (alert.status || 'LOGGED').toUpperCase();
+                                        const statusStyles = 
+                                            status === 'ACTIVE' ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] bg-red-500/5' :
+                                            status === 'VERIFIED' ? 'border-neon-cyan/50 bg-neon-cyan/5' :
+                                            'border-yellow-500/50 bg-yellow-500/5';
+                                        
+                                        const dotColor = 
+                                            status === 'ACTIVE' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]' :
+                                            status === 'VERIFIED' ? 'bg-neon-cyan shadow-[0_0_8px_rgba(0,240,255,0.8)]' :
+                                            'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.8)]';
+
+                                        return (
+                                            <motion.div
+                                                key={alert.id || idx}
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: idx * 0.1 }}
+                                                className={`p-4 rounded-xl border ${statusStyles} backdrop-blur-sm relative overflow-hidden transition-all duration-300`}
+                                            >
+                                                <div className="flex justify-between items-start mb-2 relative z-10">
+                                                    <span className="text-[10px] font-mono opacity-80 flex items-center gap-1.5 font-bold">
+                                                        {getSeverityIcon(alert.severity || 'info')}
+                                                        {alert.created_at ? new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                                    </span>
+                                                    <span className={`text-[9px] font-bold uppercase tracking-widest bg-black/60 px-2.5 py-1 rounded border border-current opacity-90 ${
+                                                        status === 'ACTIVE' ? 'text-red-500' : status === 'VERIFIED' ? 'text-neon-cyan' : 'text-yellow-500'
+                                                    }`}>
+                                                        {alert.status || 'Active'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-start gap-2 relative z-10 mt-1">
+                                                    <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${dotColor}`} />
+                                                    <p className="text-sm font-medium leading-snug">
+                                                        {alert.message}
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-40 text-gray-500 opacity-60">
                                         <AlertTriangle className="w-8 h-8 mb-2 opacity-20" />
