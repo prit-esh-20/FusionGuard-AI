@@ -19,10 +19,12 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { type, message, severity } = req.body;
+    
+    const alertSeverity = severity || "WARNING";
 
     const result = await pool.query(
       "INSERT INTO alerts(type, message, severity) VALUES($1,$2,$3) RETURNING *",
-      [type, message, severity]
+      [type, message, alertSeverity]
     );
 
     res.json(result.rows[0]);

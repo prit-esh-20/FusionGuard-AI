@@ -8,7 +8,7 @@ const AlertItem = ({ time, msg, type, status }: any) => {
     const formattedType = (type || 'info').toUpperCase();
     
     const getSeverityStyles = (severity: string) => {
-        if (severity === 'CRITICAL') return 'border-neon-red shadow-[inset_4px_0_10px_rgba(255,50,50,0.1)]';
+        if (severity === 'CRITICAL') return 'border-red-500 shadow-red-500/30 animate-pulse';
         if (severity === 'WARNING') return 'border-yellow-500 shadow-[inset_4px_0_10px_rgba(234,179,8,0.1)]';
         return 'border-neon-cyan shadow-[inset_4px_0_10px_rgba(0,240,255,0.05)]';
     };
