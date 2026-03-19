@@ -25,22 +25,27 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
 
-  const { name, email, role, status } = req.body;
+  const { name, email, password, role, status } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ message: "Password is required" });
+  }
 
   try {
+    const bcrypt = require("bcrypt");
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await pool.query(
-      `INSERT INTO users (name,email,role,status)
-       VALUES ($1,$2,$3,$4)
-       RETURNING *`,
-      [name, email, role, status]
+    await pool.query(
+      `INSERT INTO users (name, email, password, role, status)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [name, email, hashedPassword, role, status]
     );
 
-    res.json(result.rows[0]);
+    res.json({ message: "User created successfully" });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "User creation failed" });
+    res.status(500).json({ message: "Failed to create user" });
   }
 });
 

@@ -59,6 +59,8 @@ const UserManagement = () => {
         }
 
         try {
+            console.log({ name: addUserState.name, email: addUserState.email, password: addUserState.password, role: addUserState.role, status: addUserState.status });
+            
             const response = await fetch('http://localhost:3000/api/users', {
                 method: 'POST',
                 headers: {
@@ -67,6 +69,7 @@ const UserManagement = () => {
                 body: JSON.stringify({
                     name: addUserState.name,
                     email: addUserState.email,
+                    password: addUserState.password,
                     role: addUserState.role,
                     status: addUserState.status
                 }),
