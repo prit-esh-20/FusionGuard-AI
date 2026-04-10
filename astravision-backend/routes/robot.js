@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const axios = require("axios");
+const FormData = require("form-data");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
+const ML_API_URL = "https://astravision.onrender.com/predict";
 
 /* GET robot status */
 
@@ -32,6 +37,34 @@ router.post("/status", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to update robot status" });
+  }
+});
+
+
+router.post("/detect", upload.single("file"), async (req, res) => {
+  try {
+    const imageBuffer = req.file.buffer;``
+
+    const formData = new FormData();
+    formData.append("file", imageBuffer, "frame.jpg");
+
+    const mlResponse = await axios.post(ML_API_URL, formData, {
+      headers: formData.getHeaders(),
+    });
+
+    const result = mlResponse.data;
+
+    if (result.prediction === "Human") {
+      await pool.query(
+        "INSERT INTO alerts (message, severity) VALUES ($1, $2)",
+        ["Human detected by ML model", "CRITICAL"]
+      );
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error("ML detection failed:", error.message);
+    res.status(500).json({ error: "ML detection failed" });
   }
 });
 

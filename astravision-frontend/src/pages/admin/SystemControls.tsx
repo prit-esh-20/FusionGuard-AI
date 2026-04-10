@@ -136,10 +136,10 @@ const SystemControls = () => {
                         Sensor Interface
                     </h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {[1, 2, 3, 4].map((sensor) => (
+                        {['ESP32-CAM', 'Ultrasonic Front', 'Ultrasonic Rear', 'Arduino Controller'].map((sensor) => (
                             <div key={sensor} className="bg-dark-surface/50 border border-dark-border p-4 rounded flex items-center justify-between group hover:border-neon-green/30 transition-colors">
-                                <span className="text-gray-400 font-mono text-xs uppercase tracking-widest">Sensor 0{sensor}</span>
-                                <Wifi className={`w-4 h-4 text-neon-green ${systemMode === 'ACTIVE' ? 'animate-pulse' : 'opacity-20'}`} />
+                                <span className="text-gray-400 font-mono text-[10px] sm:text-xs uppercase tracking-widest leading-none">{sensor}</span>
+                                <Wifi className={`w-4 h-4 text-neon-green flex-shrink-0 ml-2 ${systemMode === 'ACTIVE' ? 'animate-pulse' : 'opacity-20'}`} />
                             </div>
                         ))}
                     </div>

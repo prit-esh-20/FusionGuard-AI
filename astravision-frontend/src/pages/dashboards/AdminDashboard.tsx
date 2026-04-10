@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSystem } from '../../context/SystemContext';
 import {
-    Settings, Camera, Cpu, Zap, Sliders, Users, Battery, Wifi, Clock, ShieldAlert, AlertTriangle
+    Settings, Cpu, Sliders, Users, Battery, Wifi, Clock, ShieldAlert, AlertTriangle
 } from 'lucide-react';
 
 const ControlPanel = ({ title, icon: Icon, children, className = '' }: any) => (
@@ -24,9 +24,9 @@ const AdminDashboard = () => {
     const [patrolActive, setPatrolActive] = useState(true);
     const [mlEnabled, setMlEnabled] = useState(true);
     const [testMode, setTestMode] = useState(false);
-    const [servoAngle, setServoAngle] = useState(90);
-    const [mlThreshold, setMlThreshold] = useState(85);
-    const [ultraThreshold, setUltraThreshold] = useState(2.5);
+    const [servoAngle] = useState(180);
+    const [mlThreshold] = useState(85);
+    const [ultraThreshold] = useState(0.5);
     interface RobotMetrics {
         uptime: string;
         cpu_load: number;
@@ -36,9 +36,8 @@ const AdminDashboard = () => {
 
     const [metrics, setMetrics] = useState<RobotMetrics | null>(null);
     const [alerts, setAlerts] = useState<any[]>([]);
-    const [thermSens, setThermSens] = useState(28.0);
     const uptime = metrics?.uptime || '--:--:--';
-    const [confirmAction, setConfirmAction] = useState<null | 'stop-motors' | 'reboot-esp32'>(null);
+    const [confirmAction, setConfirmAction] = useState<null | 'stop-motors'>(null);
 
     interface Identity {
         id: string;
@@ -132,7 +131,6 @@ const AdminDashboard = () => {
                                 <button
                                     onClick={() => {
                                         if (confirmAction === 'stop-motors') setPatrolActive(!patrolActive);
-                                        // Fake reboot
                                         setConfirmAction(null);
                                     }}
                                     className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-neon-red/20 text-neon-red border border-neon-red hover:bg-neon-red hover:text-black transition-all shadow-[0_0_10px_rgba(255,50,50,0.2)]"
@@ -231,29 +229,17 @@ const AdminDashboard = () => {
 
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs text-gray-400 font-mono">
-                            <span>Manual Override (Servo)</span>
-                            <span>{servoAngle}°</span>
+                            <span>Servo Position</span>
+                            <span className="text-neon-cyan">180°</span>
                         </div>
                         <input
-                            type="range" min="0" max="180" value={servoAngle}
-                            onChange={(e) => setServoAngle(parseInt(e.target.value))}
-                            className="w-full accent-neon-cyan cursor-grab active:cursor-grabbing"
-                            title={`${servoAngle}°`}
-                            disabled={patrolActive}
+                            type="range" min="0" max="180" value={180}
+                            className="w-full accent-neon-cyan cursor-not-allowed opacity-50"
+                            title="180°"
+                            disabled
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mt-6">
-                        <button className="flex items-center justify-center space-x-2 bg-dark-surface hover:bg-white/10 px-3 py-2 border border-dark-border text-xs font-mono uppercase transition-colors">
-                            <Camera className="w-4 h-4 text-neon-cyan" /> <span>Force Cap</span>
-                        </button>
-                        <button
-                            onClick={() => setConfirmAction('reboot-esp32')}
-                            className="flex items-center justify-center space-x-2 bg-red-500/10 hover:bg-neon-red hover:text-black px-3 py-2 border border-neon-red/50 text-neon-red text-xs font-mono uppercase transition-colors"
-                        >
-                            <Zap className="w-4 h-4" /> <span>Reboot ESP32</span>
-                        </button>
-                    </div>
                 </ControlPanel>
 
                 {/* Sensor Configuration */}
@@ -261,31 +247,14 @@ const AdminDashboard = () => {
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <div className="flex justify-between text-xs text-gray-400 font-mono">
-                                <span>Ultrasonic Trigger Distance</span>
-                                <span className="text-neon-blue">{ultraThreshold.toFixed(1)}m</span>
+                                <span>Ultrasonic Distance Threshold</span>
+                                <span className="text-neon-blue">50 cm</span>
                             </div>
                             <input
-                                title={`${ultraThreshold.toFixed(1)}m`}
-                                type="range" min="0.5" max="5.0" step="0.1" value={ultraThreshold}
-                                onChange={(e) => {
-                                    const val = parseFloat(e.target.value);
-                                    setUltraThreshold(val);
-                                    updateUltrasonicDistance(val);
-                                }}
-                                className="w-full accent-neon-blue cursor-grab active:cursor-grabbing"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-xs text-gray-400 font-mono">
-                                <span>Thermal Alert Base Sensitivity</span>
-                                <span className="text-neon-red">{thermSens.toFixed(1)}°C</span>
-                            </div>
-                            <input
-                                title={`${thermSens.toFixed(1)}°C`}
-                                type="range" min="20" max="40" step="0.5" value={thermSens}
-                                onChange={(e) => setThermSens(parseFloat(e.target.value))}
-                                className="w-full accent-neon-red line-glow-red cursor-grab active:cursor-grabbing"
+                                title="50 cm"
+                                type="range" min="0" max="5.0" step="0.1" value={0.5}
+                                className="w-full accent-neon-blue cursor-not-allowed opacity-50"
+                                disabled
                             />
                         </div>
                     </div>
@@ -311,8 +280,8 @@ const AdminDashboard = () => {
                         <input
                             title={`${mlThreshold}%`}
                             type="range" min="70" max="99" value={mlThreshold}
-                            onChange={(e) => setMlThreshold(parseInt(e.target.value))}
-                            className="w-full accent-neon-cyan cursor-grab active:cursor-grabbing"
+                            className="w-full accent-neon-cyan cursor-not-allowed opacity-50"
+                            disabled
                         />
                     </div>
 
