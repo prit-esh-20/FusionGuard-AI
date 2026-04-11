@@ -41,12 +41,13 @@ router.post("/status", async (req, res) => {
 });
 
 
-router.post("/detect", upload.single("file"), async (req, res) => {
+router.get("/detect-live", async (req, res) => {
   try {
-    const imageBuffer = req.file.buffer;``
+    const espResponse = await fetch("http://10.77.189.134/capture");
+    const imageBuffer = Buffer.from(await espResponse.arrayBuffer());
 
     const formData = new FormData();
-    formData.append("file", imageBuffer, "frame.jpg");
+    formData.append("file", imageBuffer, "live.jpg");
 
     const mlResponse = await axios.post(ML_API_URL, formData, {
       headers: formData.getHeaders(),
@@ -57,14 +58,14 @@ router.post("/detect", upload.single("file"), async (req, res) => {
     if (result.prediction === "Human") {
       await pool.query(
         "INSERT INTO alerts (message, severity) VALUES ($1, $2)",
-        ["Human detected by ML model", "CRITICAL"]
+        ["Live human detected by ESP32-CAM", "CRITICAL"]
       );
     }
 
     res.json(result);
   } catch (error) {
-    console.error("ML detection failed:", error.message);
-    res.status(500).json({ error: "ML detection failed" });
+    console.error("Live detection failed:", error.message);
+    res.status(500).json({ error: "Live detection failed" });
   }
 });
 

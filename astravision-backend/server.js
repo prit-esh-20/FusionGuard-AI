@@ -31,6 +31,17 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+setInterval(async () => {
+  try {
+    const fetch = global.fetch;
+    const res = await fetch(`http://localhost:${PORT}/api/robot/detect-live`);
+    const data = await res.json();
+    console.log("Auto Detection:", data);
+  } catch (error) {
+    console.error("Auto detection failed:", error.message);
+  }
+}, 5000);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
