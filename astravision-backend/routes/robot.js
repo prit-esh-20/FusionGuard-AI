@@ -57,7 +57,7 @@ router.get("/detect-live", async (req, res) => {
 
     if (result.prediction === "Human") {
       await pool.query(
-        "INSERT INTO alerts (message, severity) VALUES ($1, $2)",
+        "INSERT INTO alerts (message, severity, created_at) VALUES ($1, $2, NOW())",
         ["Live human detected by ESP32-CAM", "CRITICAL"]
       );
     }

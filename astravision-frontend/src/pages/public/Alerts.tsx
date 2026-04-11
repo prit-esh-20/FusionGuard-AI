@@ -10,24 +10,28 @@ const AlertItem = ({ time, msg, type, status }: any) => {
     const getSeverityStyles = (severity: string) => {
         if (severity === 'CRITICAL') return 'border-red-500 shadow-red-500/30 animate-pulse';
         if (severity === 'WARNING') return 'border-yellow-500 shadow-[inset_4px_0_10px_rgba(234,179,8,0.1)]';
+        if (severity === 'SUCCESS') return 'border-neon-green shadow-[inset_4px_0_10px_rgba(34,197,94,0.1)]';
         return 'border-neon-cyan shadow-[inset_4px_0_10px_rgba(0,240,255,0.05)]';
     };
 
     const getIconStyles = (severity: string) => {
         if (severity === 'CRITICAL') return 'text-neon-red border-neon-red/30 bg-neon-red/10';
         if (severity === 'WARNING') return 'text-yellow-500 border-yellow-500/30 bg-yellow-500/10';
+        if (severity === 'SUCCESS') return 'text-neon-green border-neon-green/30 bg-neon-green/10';
         return 'text-neon-cyan border-dark-border bg-dark-base';
     };
 
     const getBadgeStyles = (severity: string) => {
         if (severity === 'CRITICAL') return 'bg-neon-red/10 text-neon-red border-neon-red/20';
         if (severity === 'WARNING') return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+        if (severity === 'SUCCESS') return 'bg-neon-green/10 text-neon-green border-neon-green/20';
         return 'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20';
     };
     
     const renderIcon = (severity: string) => {
         if (severity === 'CRITICAL') return <ShieldAlert size={18} />;
         if (severity === 'WARNING') return <AlertTriangle size={18} />;
+        if (severity === 'SUCCESS') return <CheckCircle size={18} />;
         return <Info size={18} />;
     };
 
@@ -119,7 +123,7 @@ const Alerts = () => {
                 {alerts.map((alert, i) => (
                     <AlertItem 
                         key={alert.id || i} 
-                        time={alert.created_at ? new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'N/A'}
+                        time={alert.created_at ? new Date(alert.created_at).toLocaleTimeString() : 'N/A'}
                         msg={alert.message}
                         type={alert.severity || alert.type || 'info'}
                         status={alert.status || 'LOGGED'}

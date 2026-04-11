@@ -79,11 +79,13 @@ const UserDashboard = () => {
 
 
     const getSeverityIcon = (severity: string) => {
-        switch (severity) {
+        const s = (severity || 'info').toLowerCase();
+        switch (s) {
             case 'critical': return <AlertTriangle className="w-4 h-4 text-neon-red" />;
             case 'warning': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+            case 'success': return <ShieldCheck className="w-4 h-4 text-neon-green" />;
             case 'info': return <Info className="w-4 h-4 text-neon-cyan" />;
-            default: return null;
+            default: return <Info className="w-4 h-4 text-neon-cyan" />;
         }
     };
 
@@ -234,16 +236,19 @@ const UserDashboard = () => {
                                             const themeStyles = 
                                                 severity === 'CRITICAL' ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] bg-red-500/5' :
                                                 severity === 'WARNING' ? 'border-yellow-500/50 bg-yellow-500/5' :
+                                                severity === 'SUCCESS' ? 'border-neon-green/50 bg-neon-green/5' :
                                                 'border-neon-cyan/50 bg-neon-cyan/5';
                                             
                                             const dotColor = 
                                                 severity === 'CRITICAL' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]' :
                                                 severity === 'WARNING' ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.8)]' :
+                                                severity === 'SUCCESS' ? 'bg-neon-green shadow-[0_0_8px_rgba(0,255,100,0.8)]' :
                                                 'bg-neon-cyan shadow-[0_0_8px_rgba(0,240,255,0.8)]';
 
                                             const textColor = 
                                                 severity === 'CRITICAL' ? 'text-red-500' : 
                                                 severity === 'WARNING' ? 'text-yellow-500' : 
+                                                severity === 'SUCCESS' ? 'text-neon-green' :
                                                 'text-neon-cyan';
 
                                             return (
@@ -257,7 +262,7 @@ const UserDashboard = () => {
                                                     <div className="flex justify-between items-start mb-2 relative z-10">
                                                         <span className="text-[10px] font-mono opacity-80 flex items-center gap-1.5 font-bold">
                                                             {getSeverityIcon(alert.severity || 'info')}
-                                                            {alert.created_at ? new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                                            {alert.created_at ? new Date(alert.created_at).toLocaleTimeString() : 'N/A'}
                                                         </span>
                                                         <span className={`text-[9px] font-bold uppercase tracking-widest bg-black/60 px-2.5 py-1 rounded border border-current opacity-90 ${textColor}`}>
                                                             {status}

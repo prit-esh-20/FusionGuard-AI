@@ -1,5 +1,30 @@
 require("dotenv").config();
-require("./db");
+const pool = require("./db");
+
+const initializeAlerts = async () => {
+    try {
+        await pool.query("DELETE FROM alerts");
+        console.log("Database cleared: Previous alerts removed for new session.");
+
+        // Insert default alerts for a balanced dashboard
+        const defaultAlerts = [
+            { message: "System monitoring active", severity: "SUCCESS" },
+            { message: "Network online", severity: "SUCCESS" },
+            { message: "Battery level low", severity: "WARNING" }
+        ];
+
+        for (const alert of defaultAlerts) {
+            await pool.query(
+                "INSERT INTO alerts (message, severity, created_at) VALUES ($1, $2, NOW())",
+                [alert.message, alert.severity]
+            );
+        }
+        console.log("Default alerts initialized.");
+    } catch (err) {
+        console.error("Error initializing alerts table:", err);
+    }
+};
+initializeAlerts();
 
 const metricsRoutes = require("./routes/metrics");
 const configRoutes = require("./routes/config");
@@ -40,7 +65,7 @@ setInterval(async () => {
   } catch (error) {
     console.error("Auto detection failed:", error.message);
   }
-}, 5000);
+}, 2000);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
