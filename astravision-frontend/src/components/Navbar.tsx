@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders, Layers, Video } from 'lucide-react';
+import { Shield, Menu, X, Terminal, Cpu, ShieldAlert, Activity, LogOut, Settings, Users, Sliders, Layers, Video, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +12,7 @@ const Navbar = () => {
         { name: 'Home', path: '/', icon: Shield },
         { name: 'Architecture', path: '/architecture', icon: Layers },
         { name: 'About', path: '/about', icon: Terminal },
+        { name: 'Contact', path: '/contact', icon: Mail },
     ];
 
     const userLinks = [

@@ -4,6 +4,7 @@ import Landing from './pages/public/Landing';
 import Architecture from './pages/public/Architecture';
 import Alerts from './pages/public/Alerts';
 import About from './pages/public/About';
+import Contact from './pages/public/Contact';
 import Login from './pages/auth/Login';
 import UserDashboard from './pages/dashboards/UserDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
@@ -28,6 +29,7 @@ function App() {
               <Route index element={<Landing />} />
               <Route path="/architecture" element={<Architecture />} />
               <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
 
               {/* Authenticated Routes - With Neural Background */}
