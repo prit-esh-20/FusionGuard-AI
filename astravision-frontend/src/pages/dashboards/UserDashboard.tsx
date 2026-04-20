@@ -23,28 +23,29 @@ const UserDashboard = () => {
     const fetchDashboardData = async () => {
         try {
             // Fetch Alerts
-            const alertsRes = await fetch('http://localhost:5000/api/alerts');
+            const alertsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/alerts`);
             const alertsData = await alertsRes.json();
             // Map backend data to UI expectations if necessary, or just store directly
             // For now, storing directly as requested
             setAlerts(alertsData);
 
             // Fetch Logs
-            const logsRes = await fetch('http://localhost:5000/api/logs');
+            const logsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/logs`);
             const logsData = await logsRes.json();
             setLogs(logsData);
 
             // Fetch Robot Status
-            const statusRes = await fetch("http://localhost:5000/api/robot/status");
+            const statusRes = await fetch(`${import.meta.env.VITE_API_URL}/api/robot/status`);
             const data = await statusRes.json();
             console.log(data);
 
             setRobotStatus({
-                mode: data.status || "UNKNOWN",
-                battery: data.battery || 0,
-                network: "Online",
-                last_activity: "Robot active",
+                mode: data.mode || "Patrolling",
+                battery: data.battery || data.battery_level || 0,
+                network: data.status === "active" ? "Online" : "Offline",
+                last_activity: "Live monitoring active",
             });
+            
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         }

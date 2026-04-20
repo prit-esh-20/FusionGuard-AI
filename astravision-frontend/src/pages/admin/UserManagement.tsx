@@ -17,7 +17,7 @@ const UserManagement = () => {
 
     const loadUsers = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/users");
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`);
             const data = await res.json();
             setUsers(data);
         } catch (err) {
@@ -61,7 +61,7 @@ const UserManagement = () => {
         try {
             console.log({ name: addUserState.name, email: addUserState.email, password: addUserState.password, role: addUserState.role, status: addUserState.status });
             
-            const response = await fetch('http://localhost:5000/api/users', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const UserManagement = () => {
 
     const handleDeleteUser = async (id: string) => {
         try {
-            await fetch(`http://localhost:5000/api/users/${id}`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
                 method: "DELETE"
             });
             await loadUsers();

@@ -52,7 +52,7 @@ const AdminDashboard = () => {
 
     const loadUsers = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/users");
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`);
             const data = await res.json();
             setUsers(data);
         } catch (err) {
@@ -68,12 +68,12 @@ const AdminDashboard = () => {
         const fetchSystemData = async () => {
             try {
                 // Fetch Metrics
-                const metricsRes = await fetch("http://localhost:5000/api/metrics");
+                const metricsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/metrics`);
                 const metricsData = await metricsRes.json();
                 setMetrics(metricsData);
 
                 // Fetch Alerts
-                const alertsRes = await fetch("http://localhost:5000/api/alerts");
+                const alertsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/alerts`);
                 const alertsData = await alertsRes.json();
                 setAlerts(alertsData);
                 setLastSync(new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));

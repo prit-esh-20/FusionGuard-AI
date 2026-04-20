@@ -90,7 +90,7 @@ const Recordings = () => {
 
     const fetchRecordings = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/recordings?category=${category}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/recordings?category=${category}`);
             const data = await res.json();
             
             // Sort frontend data since API sorting might not be implemented
