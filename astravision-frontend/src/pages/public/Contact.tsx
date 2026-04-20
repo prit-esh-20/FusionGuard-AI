@@ -59,8 +59,10 @@ const Contact = () => {
 
   setIsSubmitting(true);
 
+  const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
   try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
+      const response = await fetch(`${baseUrl}/api/contact`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

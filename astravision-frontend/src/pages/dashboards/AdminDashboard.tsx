@@ -51,8 +51,9 @@ const AdminDashboard = () => {
     const [users, setUsers] = useState<Identity[]>([]);
 
     const loadUsers = async () => {
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`);
+            const res = await fetch(`${baseUrl}/api/users`);
             const data = await res.json();
             setUsers(data);
         } catch (err) {
@@ -66,14 +67,15 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         const fetchSystemData = async () => {
+            const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
             try {
                 // Fetch Metrics
-                const metricsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/metrics`);
+                const metricsRes = await fetch(`${baseUrl}/api/metrics`);
                 const metricsData = await metricsRes.json();
                 setMetrics(metricsData);
 
                 // Fetch Alerts
-                const alertsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/alerts`);
+                const alertsRes = await fetch(`${baseUrl}/api/alerts`);
                 const alertsData = await alertsRes.json();
                 setAlerts(alertsData);
                 setLastSync(new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));

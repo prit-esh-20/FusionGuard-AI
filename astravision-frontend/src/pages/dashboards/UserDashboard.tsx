@@ -21,21 +21,25 @@ const UserDashboard = () => {
     const [latency, setLatency] = useState(42);
 
     const fetchDashboardData = async () => {
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+        if (!baseUrl) {
+            console.error("VITE_API_URL is not defined. Dashboard data will fail to load.");
+            return;
+        }
+
         try {
             // Fetch Alerts
-            const alertsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/alerts`);
+            const alertsRes = await fetch(`${baseUrl}/api/alerts`);
             const alertsData = await alertsRes.json();
-            // Map backend data to UI expectations if necessary, or just store directly
-            // For now, storing directly as requested
             setAlerts(alertsData);
 
             // Fetch Logs
-            const logsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/logs`);
+            const logsRes = await fetch(`${baseUrl}/api/logs`);
             const logsData = await logsRes.json();
             setLogs(logsData);
 
             // Fetch Robot Status
-            const statusRes = await fetch(`${import.meta.env.VITE_API_URL}/api/robot/status`);
+            const statusRes = await fetch(`${baseUrl}/api/robot/status`);
             const data = await statusRes.json();
             console.log(data);
 
@@ -124,7 +128,7 @@ const UserDashboard = () => {
                         {/* ESP32 Camera Stream */}
                         <div className="absolute inset-0 bg-[#060a12] flex items-center justify-center overflow-hidden">
                             <img
-                                src="http://10.77.189.134:81/stream"
+                                src={import.meta.env.VITE_STREAM_URL || "http://10.77.189.134:81/stream"}
                                 alt="ESP32 Camera"
                                 className="w-full h-full object-cover"
                             />

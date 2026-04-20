@@ -16,8 +16,9 @@ const UserManagement = () => {
     const [users, setUsers] = useState<Identity[]>([]);
 
     const loadUsers = async () => {
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`);
+            const res = await fetch(`${baseUrl}/api/users`);
             const data = await res.json();
             setUsers(data);
         } catch (err) {
@@ -61,7 +62,8 @@ const UserManagement = () => {
         try {
             console.log({ name: addUserState.name, email: addUserState.email, password: addUserState.password, role: addUserState.role, status: addUserState.status });
             
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
+            const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+            const response = await fetch(`${baseUrl}/api/users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,8 +95,9 @@ const UserManagement = () => {
     };
 
     const handleDeleteUser = async (id: string) => {
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
         try {
-            await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
+            await fetch(`${baseUrl}/api/users/${id}`, {
                 method: "DELETE"
             });
             await loadUsers();

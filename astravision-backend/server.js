@@ -16,7 +16,14 @@ const contactRoutes = require('./routes/contact');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://astra-vision.vercel.app"
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.use("/api/robot", robotRoutes);
@@ -64,7 +71,7 @@ async function autoDetectLoop() {
   while (true) {
     try {
       const res = await axios.get(
-        `http://localhost:${PORT}/api/robot/detect-live`
+        `http://127.0.0.1:${PORT}/api/robot/detect-live`
       );
 
       const data = res.data;

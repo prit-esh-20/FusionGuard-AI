@@ -72,8 +72,9 @@ const Alerts = () => {
     const previousAlertCount = useRef(0);
 
     const fetchAlerts = async () => {
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/alerts`);
+            const res = await fetch(`${baseUrl}/api/alerts`);
             const data = await res.json();
             
             if (data.length > previousAlertCount.current && previousAlertCount.current !== 0) {

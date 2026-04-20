@@ -8,8 +8,9 @@ const UserLogs = () => {
     const [dateRange, setDateRange] = useState('Last 24 Hours');
 
     const fetchLogs = async () => {
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/logs`);
+            const res = await fetch(`${baseUrl}/api/logs`);
             const data = await res.json();
             setLogs(data);
         } catch (err) {
