@@ -84,7 +84,7 @@ router.get("/detect-live", async (req, res) => {
       prediction: "Offline", 
       probability: 0,
       error: error.message,
-      suggestion: "Check if ESP32-CAM IP (10.77.189.134) is reachable and ML API is online."
+      suggestion: "Check if ESP32-CAM IP (10.130.166.134) is reachable and ML API is online."
     });
   }
 });

@@ -32,5 +32,5 @@ The system is deployed and can be accessed via the following endpoints:
 ### Local Camera Testing (ngrok)
 To bridge the local ESP32-CAM stream with the cloud dashboard, use:
 ```bash
-ngrok http 10.77.189.134:80
+ngrok http 10.130.166.134:80
 ```
