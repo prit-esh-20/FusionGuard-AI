@@ -51,7 +51,9 @@ async function initializeAlerts() {
     const defaultAlerts = [
       { message: "System monitoring active", severity: "SUCCESS" },
       { message: "Network online", severity: "SUCCESS" },
-      { message: "Battery level low", severity: "WARNING" },
+      { message: "Obstacle detected near patrol path", severity: "WARNING" }
+      { message: "Live camera stream connected", severity: "SUCCESS" }
+      { message: "Rear ultrasonic alert triggered", severity: "WARNING" }
     ];
 
     for (const alert of defaultAlerts) {
