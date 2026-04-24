@@ -128,7 +128,7 @@ const UserDashboard = () => {
                         {/* ESP32 Camera Stream */}
                         <div className="absolute inset-0 bg-[#060a12] flex items-center justify-center overflow-hidden">
                             <img
-                                src={import.meta.env.VITE_STREAM_URL || "http://10.130.166.134:81/stream"}
+                                src={import.meta.env.VITE_STREAM_URL || "http://192.168.32.134:81/stream"}
                                 alt="ESP32 Camera"
                                 className="w-full h-full object-cover"
                             />
